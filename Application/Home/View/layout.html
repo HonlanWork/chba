@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf8' />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>成功慈善拍卖</title>
+    <meta name='description' content='' />
+    <meta name='keywords' content='' />
+    <meta name='author' content='hlzhang' />
+    <link rel='shortcut icon' href=''>
+    <script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<style>
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-family: Microsoft Yahei;
+}
+nav {
+    background-color: rgba(20,20,20,0.9);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 40px;
+}
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    margin-right: 30px;
+}
+nav a:hover {
+    text-decoration: none;
+}
+</style>
+<body>
+    <img src="__PUBLIC__/img/logo.png" style="display:none;">
+    <nav>
+        <a href="{:U('Index/index')}">首页</a>
+        <a href="{:U('Index/auction')}">竞拍</a>
+        <!-- <a href="{:U('Index/result')}">排行</a> -->
+    </nav>
+    <div id="main">
+        {__CONTENT__}
+    </div>
+    <!-- <footer class="well">
+        <p>© Cppyright 2015 by <a href="http://zhanghonglun.cn">Honlan</a>. All Rights Reserved.</p>
+    </footer> -->
+</body>
+
+</html>
