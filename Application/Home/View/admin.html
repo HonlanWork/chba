@@ -28,53 +28,16 @@ html {
 }
 
 nav {
-    background-color: rgba(20, 20, 20, 0.9);
-    text-align: center;
-    background-color: #476cb3;
-    height: 63px;
+    padding: 40px 60px;
 }
 
-nav div {
-    background-color: #476cb3;
-    border-top: 3px solid #4eb8ec;
-    font-size: 12px;
-    padding: 18px;
-    padding-bottom: 12px;
-    width: 50%;
+nav a {
     display: inline-block;
-    float: left;
-    box-shadow: 2px 2px 2px rgba(20,20,20,0.4);
-}
-
-nav div span {
-    color: #4eb8ec;
     font-size: 16px;
+    color: #333;
+    margin-right: 20px;
+    text-decoration: none;
 }
-
-nav div p {
-    color: #fff;
-    margin-bottom: 0;
-    margin-top: 5px;
-}
-
-nav div.active,
-nav div:hover {
-    border-color: #7dd300;
-    background-color: #4e77b9;
-}
-
-nav div:hover {
-    cursor: pointer;
-}
-
-nav div.active span,
-nav div:hover span,
-nav div.active p,
-nav div:hover p {
-    color: #fff;
-}
-
-nav a,
 nav a:hover {
     text-decoration: none;
 }
@@ -94,22 +57,30 @@ input.form-control:focus {
     box-shadow: none;
     color: #fff;
 }
+
+#main {
+    padding: 20px 60px 40px 60px;
+}
+
+#main .my_container {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 20px 30px;
+    margin-bottom: 30px;
+}
+
+#main .my_container h5 {
+    padding-left: 12px;
+    border-left: 3px solid #7dd300;
+}
 </style>
 
 <body>
     <nav>
-        <a href="{:U('Index/index')}">
-            <div>
-                <span class="glyphicon glyphicon-home"></span>
-                <p>首页</p>
-            </div>
-        </a>
-        <a href="{:U('Index/auction')}">
-            <div>
-                <span class="glyphicon glyphicon-user"></span>
-                <p>我的</p>
-            </div>
-        </a>
+        <a href="{:U('Admin/auction')}">晚宴管理</a>
+        <a href="{:U('Admin/item')}">拍品编辑</a>
+        <a href="{:U('Admin/action')}">竞拍记录</a>
+        <a href="{:U('Admin/result')}">实时结果</a>
     </nav>
     <div id="main">
         {__CONTENT__}

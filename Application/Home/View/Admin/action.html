@@ -1,0 +1,49 @@
+<style>
+	
+</style>
+<div class="my_container">
+    <h5>当前晚宴</h5>
+    <p>晚宴名称&nbsp;&nbsp;&nbsp;{$auction.title}</p>
+    <p>开始时间&nbsp;&nbsp;&nbsp;{$auction.begintime|date='Y-m-d H:i:s',###}</p>
+    <p style="margin-bottom:0;">结束时间&nbsp;&nbsp;&nbsp;{$auction.endtime|date='Y-m-d H:i:s',###}</p>
+</div>
+<div class="my_container">
+    <h5>竞拍记录</h5>
+    <table class="table table-hover">
+		<tr>
+			<th>拍品序号</th>
+			<th>拍品名称</th>
+			<th>竞拍人</th>
+			<th>手机</th>
+			<th>竞拍价</th>
+			<th>时间</th>
+		</tr>
+		<foreach name="actions" item="v">
+			<tr>
+				<td>{$v.number}</td>
+				<td>{$v.title}</td>
+				<td>{$v.name}</td>
+				<td>{$v.cellphone}</td>
+				<td>{$v.price}</td>
+				<td>{$v.timestamp|date='Y-m-d H:i:s',###}</td>
+			</tr>
+		</foreach>
+	</table>
+</div>
+<div class="my_container">
+    <h5>初始化竞拍</h5>
+    <p>点击以下按钮后，将会清空当前晚宴所对应的<span style="color:red;margin-left:3px;margin-right:3px;">全部竞拍记录</span></p>
+    <p>并将拍品状态<span style="color:red;margin-left:3px;margin-right:3px;">全部初始化</span></p>
+    <p>请确定你真的清楚为何要点击之后再操作！</p>
+    <a href="" id="init" class="btn btn-danger">初始化竞拍</a>
+    <a href="{:U('Admin/action_init', array('id'=>$auction['id']))}" id="reinit" style="display:none;" class="btn btn-danger">你真的确定？</a>
+</div>
+<script>
+$(document).ready(function() {
+	$('#init').click(function(event) {
+		event.preventDefault();
+		$(this).hide();
+		$('#reinit').show();
+	});
+});
+</script>

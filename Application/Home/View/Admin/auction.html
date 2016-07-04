@@ -1,0 +1,88 @@
+<style>
+#main input {
+	color: #333;
+	display: inline-block;
+	width: 400px;
+	padding-left: 75px;
+}
+</style>
+<div class="my_container">
+	<h5>全部晚宴</h5>
+	<table class="table table-hover">
+		<tr>
+			<th>名称</th>
+			<th>开始时间</th>
+			<th>结束时间</th>
+			<th>状态</th>
+			<th>操作</th>
+		</tr>
+		<foreach name="auctions" item="v">
+			<tr name="{$v['id']}">
+				<td class="title">{$v.title}</td>
+				<td class="begintime">{$v.begintime|date='Y-m-d H:i:s',###}</td>
+				<td class="endtime">{$v.endtime|date='Y-m-d H:i:s',###}</td>
+				<td>{$v.status}</td>
+				<td>
+					<a href="" style="margin-right:10px;" class="edit">编辑</a>
+					<a href="{:U('Admin/auction_active', array('id'=>$v['id']))}" style="margin-right:10px;">当前</a>
+					<a href="{:U('Admin/auction_delete', array('id'=>$v['id']))}">删除</a>
+				</td>
+			</tr>
+		</foreach>
+	</table>
+	<form action="{:U('Admin/auction_edit')}" method="post" id="edit_form" style="display:none;">
+		<h5>编辑晚宴</h5>
+		<input type="text" name="id" style="display:none;">
+		<div>
+			<span style="margin-right:-60px;">晚宴名称</span>
+			<input type="text" class="form-control" name="title">
+		</div>
+		<div>
+			<span style="margin-right:-60px;">开始时间</span>
+			<input type="datetime-local" class="form-control" name="begintime" value="">
+		</div>
+        <div>
+        	<span style="margin-right:-60px;">结束时间</span>
+        	<input type="datetime-local" class="form-control" name="endtime" value="">
+        </div>
+        <button type="submit" class="btn btn-default" style="margin-top:20px;">保存</button>
+	</form>
+</div>
+<div class="my_container">
+	<h5>新增晚宴</h5>
+	<form action="{:U('Admin/auction_add')}" method="post" style="color:#333;margin-top:10px;">
+		<div>
+			<span style="margin-right:-60px;">晚宴名称</span>
+			<input type="text" class="form-control" name="title">
+		</div>
+		<div>
+			<span style="margin-right:-60px;">开始时间</span>
+			<input type="datetime-local" class="form-control" name="begintime" value="">
+		</div>
+        <div>
+        	<span style="margin-right:-60px;">结束时间</span>
+        	<input type="datetime-local" class="form-control" name="endtime" value="">
+        </div>
+        <div>
+        	<input type="checkbox" class="form-control" name="status" style="width:auto;margin-right:10px;position:relative;top:9px;"><span>是否设为当前晚宴</span>
+        </div>
+        <button type="submit" class="btn btn-default" style="margin-top:15px;">添加</button>
+	</form>
+</div>
+<script>
+$(document).ready(function() {
+	$('a.edit').click(function(event) {
+		event.preventDefault();
+		$('#edit_form').show();
+		var $tr = $(this).parent().parent();
+		$('#edit_form input[name="id"]').val($tr.attr('name'));
+		$('#edit_form input[name="title"]').val($tr.children('td.title').text());
+		var begintime = $tr.children('td.begintime').text();
+		begintime = begintime.replace(' ', 'T');
+		$('#edit_form input[name="begintime"]').val(begintime);
+		var endtime = $tr.children('td.endtime').text();
+		endtime = endtime.replace(' ', 'T');
+		$('#edit_form input[name="endtime"]').val(endtime);
+	});
+});
+</script>
