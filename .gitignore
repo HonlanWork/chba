@@ -1,5 +1,5 @@
 .DS_Store
 Application/Runtime/
 Application/Common/Conf/config.php
-Application/Public/upload/
+Public/upload/
 doc/
