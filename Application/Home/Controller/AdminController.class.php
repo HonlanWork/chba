@@ -140,6 +140,8 @@ class AdminController extends Controller {
 
     public function item_edit_handle(){
         $old = M('item')->where(array('id'=>I('id')))->find();
+        $description = I('description');
+        $donatorDesc = I('donatorDesc');
         $data = array(
             'number' => I('number'),
             'title' => I('title'),
@@ -197,6 +199,7 @@ class AdminController extends Controller {
     }
 
     public function action_init(){
+        $auction = M('auction')->where(array('status'=>'当前'))->find();
         M('action')->where(array('auction_id'=>$auction['id']))->delete();
         M('item')->where(array('auction_id'=>$auction['id']))->save(array('highest'=>0, 'owner'=>''));
         $this->redirect('Admin/action');

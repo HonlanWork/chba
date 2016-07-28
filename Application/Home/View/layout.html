@@ -94,18 +94,22 @@ input.form-control:focus {
     box-shadow: none;
     color: #fff;
 }
+
+#main {
+    padding-bottom: 40px;
+}
 </style>
 
 <body>
     <nav>
         <a href="{:U('Index/index')}">
-            <div>
+            <div id="nav1">
                 <span class="glyphicon glyphicon-home"></span>
                 <p>首页</p>
             </div>
         </a>
-        <a href="{:U('Index/auction')}">
-            <div>
+        <a href="{:U('Index/home')}">
+            <div id="nav2">
                 <span class="glyphicon glyphicon-user"></span>
                 <p>我的</p>
             </div>

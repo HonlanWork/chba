@@ -9,62 +9,107 @@ class IndexController extends Controller {
     }
 
     public function index() {
+        $auction = M('auction')->where(array('status'=>'当前'))->find();
+        $this->items = M('item')->where(array('auction_id'=>$auction['id']))->select();
+        $this->auction = $auction;
         $this->display();
     }
 
-    // public function index(){
-    // 	$this->display();
-    // }
+    public function home() {
 
-    // public function page2(){
-    //     $this->display();
-    // }
+    }
 
-    // public function page3(){
-    //     $this->display();
-    // }
+    public function detail() {
+        $item = M('item')->where(array('id'=>I('id')))->find();
 
-    // public function auction(){
-    // 	$items = M('item')->field('id,thumbnail,title')->order('id asc')->select();
-    // 	$this->items = $items;
-    // 	$this->display();
-    // }
+        if(count(explode("\n", $item['description'])) == 1 ){
+            $item['description'] = explode("\r", $item['description']);
+        } else {
+            $item['description'] = explode("\n", $item['description']);
+        }
+        foreach ($item['description'] as $key => $value) {
+            $tmp .= $value."<br/>";
+        }
+        $item['description'] = $tmp;
 
-    // public function detail(){
-    // 	$id = I('id');
-    // 	$item = M('item')->where(array('id'=>$id))->find();
-    // 	$item['imgs'] = explode(',', $item['imgs']);
-    //     $temp = [];
-    //     foreach ($item['imgs'] as $key => $value) {
-    //         if ($value != '') {
-    //             $temp[] = $value;
-    //         }
-    //     }
-    //     $item['imgs'] = $temp;
-    //     $item['next'] = intval($item['highest']) + intval($item['step']);
-    //     if ($item['next'] < intval($item['start']) + intval($item['step'])) {
-    //         $item['next'] = intval($item['start']) + intval($item['step']);
-    //     }
-    //     $this->name = '';
-    //     $this->mobile = '';
-    //     $this->company = '';
-    //     $this->position = '';
-    //     if (isset($_SESSION['name'])) {
-    //         $this->name = $_SESSION['name'];
-    //     }
-    //     if (isset($_SESSION['mobile'])) {
-    //         $this->mobile = $_SESSION['mobile'];
-    //     }
-    //     if (isset($_SESSION['company'])) {
-    //         $this->company = $_SESSION['company'];
-    //     }
-    //     if (isset($_SESSION['position'])) {
-    //         $this->position = $_SESSION['position'];
-    //     }
-    // 	$this->item = $item;
-    // 	$this->now = time();
-    // 	$this->display();
-    // }
+        if(count(explode("\n", $item['donatorDesc'])) == 1 ){
+            $item['donatorDesc'] = explode("\r", $item['donatorDesc']);
+        } else {
+            $item['donatorDesc'] = explode("\n", $item['donatorDesc']);
+        }
+        $tmp = '';
+        foreach ($item['donatorDesc'] as $key => $value) {
+            $tmp .= $value."<br/>";
+        }
+        $item['donatorDesc'] = $tmp;
+
+        $user = M('user')->where(array('id'=>$item['owner']))->find();
+        $item['owner'] = $user['name'];
+
+        $item['imgs'] = [];
+        for ($i = 1; $i <= 6; $i++) { 
+            if ($item['image'.$i] != '') {
+                $item['imgs'][] = $item['image'.$i];
+            }
+        }
+        $this->item = $item;
+        
+        $auction = M('auction')->where(array('status'=>'当前'))->find();
+        $items = M('item')->where(array('auction_id'=>$auction['id']))->select();
+
+        $current = 0;
+        $next = 0;
+        $previous = 0;
+        for ($i = 0; $i < count($items); $i++) { 
+            if ($items[$i]['id'] == I('id')) {
+                $current = $i;
+                break;
+            }
+        }
+        $previous = $current - 1;
+        $next = $current + 1;
+        if ($previous == -1) {
+            $previous = count($items) - 1;
+        }
+        if ($next == count($items)) {
+            $next = 0;
+        }
+        $this->previous = $items[$previous]['id'];
+        $this->next = $items[$next]['id'];
+        $this->auction = $auction;
+        $this->now = time();
+
+        $this->display();
+    }
+
+    public function action() {
+        $item = M('item')->where(array('id'=>I('id')))->find();
+        $auction = M('auction')->where(array('status'=>'当前'))->find();
+        $user = M('user')->where(array('id'=>I('user_id')))->find();
+
+        $data = array(
+            'auction_id' => $auction['id'],
+            'user_id' => I('user_id'),
+            'item_id' => I('id'),
+            'timestamp' => time(),
+            'number' => $item['number'],
+            'title' => $item['title'],
+            'name' => $user['name'],
+            'cellphone' => $user['cellphone'],
+            );
+
+        if ($item['highest'] == 0) {
+            $data['price'] = $item['start'];
+        }
+        else {
+            $data['price'] = $item['highest'] + $item['step'];
+        }
+        M('action')->data($data)->add();
+
+        M('item')->where(array('id'=>I('id')))->save(array('highest'=>$data['price'], 'owner'=>$user['id']));
+
+        $this->redirect('Index/detail', array('id'=>I('id')));
+    }
 
     // public function result(){
     //     $this->items = M('item')->field('id,thumbnail,title,highest,owner')->select();

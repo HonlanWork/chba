@@ -1,10 +1,10 @@
 <style>
 #detail {
-    padding: 40px 40px 30px 40px;
-    /*background-image: url(__PUBLIC__/img/background.jpg);*/
-    /*background-size: cover;*/
-    /*background-position: center;*/
-    /*background-attachment: fixed;*/
+    margin: 60px 5% 30px 5%;
+    border-radius: 4px;
+    box-shadow: 2px 2px 2px rgba(20, 20, 20, 0.4);
+    padding: 40px 5% 30px 5%;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 #detail .item_imgs .image {
@@ -15,7 +15,7 @@
 
 #detail #section1 {
     padding-bottom: 30px;
-    border-bottom: 1px solid #f05036;
+    border-bottom: 1px solid #f56e60;
 }
 
 #detail .item_basic_info p {
@@ -23,7 +23,7 @@
 }
 
 #detail #highest {
-    color: red;
+    color: #f56e60;
     margin-left: 10px;
 }
 
@@ -37,7 +37,7 @@
 
 #detail #start {
     margin-left: 10px;
-    color: blue;
+    color: #f56e60;
 }
 
 #detail #donator {
@@ -58,42 +58,22 @@
 
 #detail #want {
     text-align: center;
-    margin-top: 30px;
+    margin-top: 20px;
+    margin-bottom: 0;
 }
 
 #detail #want span {
-    color: #f05036;
-    border: 1px solid #f05036;
+    color: #f56e60;
+    border: 1px solid #f56e60;
     padding: 10px 15px;
-    border-radius: 5px;
+    border-radius: 4px;
+    display: inline-block;
 }
 
-#detail #section2 {
-    padding: 30px 0px;
-    border-bottom: 1px solid #f05036;
-    display: none;
-}
-
-#detail #section2 form {
-    width: 80%;
-    margin-left: 10%;
-    margin-right: 10%;
-}
-
-#detail #section2 form p {
-    text-align: center;
-    margin-top: 10px;
-}
-
-#detail #section2 #apply {
-    color: #f05036;
-    border: 1px solid #f05036;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-#detail #section2 form .input-group {
-    margin-bottom: 20px;
+#detail #want span:hover {
+    cursor: pointer;
+    background-color: #f56e60;
+    color: #fff;
 }
 
 #detail #section3 {
@@ -101,15 +81,23 @@
     padding-bottom: 0;
 }
 
+#detail #section3 h4 {
+    padding-left: 12px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border-left: 3px solid #f56e60;
+}
+
 #detail #section3 p {
-    text-indent: 2em;
+    color: #666;
+    padding: 5px;
 }
 
 #detail #next {
     position: fixed;
     top: 50%;
     right: 0;
-    background-color: #f05036;
+    background-color: rgba(102, 102, 102, 0.9);
     color: white;
     text-align: center;
     padding: 5px;
@@ -123,7 +111,7 @@
     position: fixed;
     top: 50%;
     left: 0;
-    background-color: #f05036;
+    background-color: rgba(102, 102, 102, 0.9);
     color: white;
     text-align: center;
     padding: 5px;
@@ -138,10 +126,6 @@
         <div class="item_imgs">
             <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner" role="listbox">
-                    <div class="item active">
-                        <div class="image" style="background-image:url(__PUBLIC__{$item['thumbnail']})">
-                        </div>
-                    </div>
                     <foreach name="item.imgs" item="i">
                         <div class="item">
                             <div class="image" style="background-image:url(__PUBLIC__{$i})">
@@ -160,68 +144,46 @@
             </div>
         </div>
         <div class="item_basic_info">
-            <h3>{$item.title}</h3>
+            <h4 style="margin-top:30px;margin-bottom:20px;font-size:16px;line-height:1.2;">{$item.number}&nbsp;&nbsp;{$item.title}</h4>
             <p>捐赠者<span id="donator">{$item.donator}</span></p>
-            <p>最高价<span id="highest">¥ {$item.highest}</span></p>
             <p>起拍价<span id="start">¥ {$item.start}</span></p>
+            <p>最高价<span id="highest">¥ {$item.highest}</span></p>
             <p>出价者<span id="owner">{$item.owner}</span></p>
-            <p>最低加价<span id="step">¥ {$item.step}</span></p>
-            <p>拍品数量<span id="num">{$item.num}</span></p>
-            <p>拍卖状态<span id="status">
-                    <if condition="$item.deadline gt $now">
-                        拍卖中
+            <p>每次加价<span id="step">¥ {$item.step}</span></p>
+            <p>拍品数量<span id="num">{$item.amount}</span></p>
+            <p>拍卖状态
+                <if condition="$auction['begintime'] gt $now">
+                    <span id="status">未开始</span>
+                    <elseif condition="$auction['endtime'] lt $now" />
+                    <span id="status">已结束</span>
                     <else/>
-                        已结束
-                    </if>
-                </span></p>
-            <p>距离结束还有<span id="deadline" style="display:none;">{$item.deadline}</span><span id="timeleft"></span></p>
-            <p id="want"><span>我要出价</span></p>
+                    <span id="status">进行中</span>
+                </if>
+            </p>
+            <p>距离结束<span id="deadline" style="display:none;">{$auction.endtime}</span><span id="timeleft"></span></p>
+            <if condition="$auction['begintime'] lt $now and $auction['endtime'] gt $now">
+                <p id="want"><a href="{:U('Index/action', array('id'=>$item['id'], 'user_id'=>$_SESSION['uid']))}"><span>我要出价</span></a></p>
+            </if>
         </div>
-    </div>
-    <div id="section2">
-        <form>
-            <div class="input-group">
-                <div class="input-group-addon"><span class="glyphicon glyphicon-fire"></span></div>
-                <input type="text" class="form-control" name="price" placeholder="出价 price" value="{$item['next']}">
-                <p style="display:none;" id="next_price">{$item.next}</p>
-            </div>
-            <div class="input-group">
-                <div class="input-group-addon"><span class="glyphicon glyphicon-user"></span></div>
-                <input type="text" class="form-control" name="name" placeholder="姓名 Name" value="{$name}">
-            </div>
-            <div class="input-group">
-                <div class="input-group-addon"><span class="glyphicon glyphicon-phone"></span></div>
-                <input type="tel" class="form-control" name="mobile" placeholder="手机 Mobile" value="{$mobile}">
-            </div>
-            <div class="input-group">
-                <div class="input-group-addon"><span class="glyphicon glyphicon-globe"></span></div>
-                <input type="text" class="form-control" name="company" placeholder="公司 Company" value="{$company}">
-            </div>
-            <div class="input-group" style="margin-bottom:35px;">
-                <div class="input-group-addon"><span class="glyphicon glyphicon-flag"></span></div>
-                <input type="text" class="form-control" name="position" placeholder="职位 Position" value="{$position}">
-            </div>
-            <p><span id="apply">立即出价</span></p>
-        </form>
     </div>
     <div id="section3">
         <if condition="$item['description']">
-            <h3>拍品介绍</h3>
-            <p>{$item.description}</p>
+            <h4>拍品介绍</h4>
+            <p style="margin-bottom:20px;">{$item.description}</p>
         </if>
         <if condition="$item['donatorDesc']">
-            <h3>捐赠者介绍</h3>
+            <h4>捐赠者介绍</h4>
             <p>{$item.donatorDesc}</p>
         </if>
     </div>
     <div id="previous">
-        <a href="{:U('Index/detail',array('id'=>(($item['id']-3+11)%12+3)))}" style="color:white;text-decoration:none;">
+        <a href="{:U('Index/detail',array('id'=>$previous))}" style="color:white;text-decoration:none;">
             <p style="margin-bottom:0;">上一件
                 <br>拍品</p>
         </a>
     </div>
     <div id="next">
-        <a href="{:U('Index/detail',array('id'=>(($item['id']-3+1)%12+3)))}" style="color:white;text-decoration:none;">
+        <a href="{:U('Index/detail',array('id'=>$next))}" style="color:white;text-decoration:none;">
             <p style="margin-bottom:0;">下一件
                 <br>拍品</p>
         </a>
@@ -229,22 +191,30 @@
 </div>
 <script>
 $(document).ready(function() {
+    $('.carousel-inner .item:first-child').addClass('active');
     $('#carousel-example-generic').carousel('cycle');
 
     timer();
 
     function timer() {
-        var ts = parseInt($('#deadline').text()) * 1000 - (new Date()).valueOf();
-        var dd = parseInt(ts / 1000 / 60 / 60 / 24, 10);
-        var hh = parseInt(ts / 1000 / 60 / 60 % 24, 10);
-        var mm = parseInt(ts / 1000 / 60 % 60, 10);
-        var ss = parseInt(ts / 1000 % 60, 10);
-        dd = checkTime(dd);
-        hh = checkTime(hh);
-        mm = checkTime(mm);
-        ss = checkTime(ss);
-        document.getElementById("timeleft").innerHTML = dd + "天" + hh + "时" + mm + "分" + ss + "秒";
-        setInterval(function() {
+        console.log($('#status').text());
+        if ($('#status').text() == '进行中') {
+            console.log($('#deadline').text());
+            var ts = parseInt($('#deadline').text()) * 1000 - (new Date()).valueOf();
+            var dd = parseInt(ts / 1000 / 60 / 60 / 24, 10);
+            var hh = parseInt(ts / 1000 / 60 / 60 % 24, 10);
+            var mm = parseInt(ts / 1000 / 60 % 60, 10);
+            var ss = parseInt(ts / 1000 % 60, 10);
+            dd = checkTime(dd);
+            hh = checkTime(hh);
+            mm = checkTime(mm);
+            ss = checkTime(ss);
+            document.getElementById("timeleft").innerHTML = dd + "天" + hh + "时" + mm + "分" + ss + "秒";
+        } else {
+            document.getElementById("timeleft").innerHTML = "-";
+        }
+
+        setTimeout(function() {
             timer();
         }, 1000);
     }
@@ -255,50 +225,5 @@ $(document).ready(function() {
         }
         return i;
     }
-
-    $('#detail #want span').click(function() {
-        $('#detail #section2').toggle();
-    });
-
-    var once = true;
-
-    $('#detail #apply').click(function() {
-        if ($('#detail #section2 input[name="name"]').val() == '' || $('#detail #section2 input[name="mobile"]').val() == '' || $('#detail #section2 input[name="company"]').val() == '' || $('#detail #section2 input[name="position"]').val() == '') {
-            alert('基本信息未填写完善');
-        } else if ($('#detail #section2 input[name="price"]').val() != '') {
-            var price = parseInt($('#detail #section2 input[name="price"]').val());
-            if (price < parseInt($('#next_price').text())) {
-                alert('对不起，您的竞价低于最低加价，请重新提交');
-            } else {
-                if (once) {
-                    once = false;
-                    $('#detail #apply').hide();
-                    $('#detail #section2').append("<p style='color:#f05036;text-align:center;'>您本次的竞价已经提交<br>请点击右侧“下一件拍品”继续竞拍</p>")
-                    $('#detail #section2 .input-group').hide();
-                    $.ajax({
-                        url: "{:U('Index/price')}",
-                        type: "POST",
-                        data: {
-                            name: $('#detail #section2 input[name="name"]').val(),
-                            mobile: $('#detail #section2 input[name="mobile"]').val(),
-                            company: $('#detail #section2 input[name="company"]').val(),
-                            position: $('#detail #section2 input[name="position"]').val(),
-                            price: $('#detail #section2 input[name="price"]').val(),
-                            itemId: "{$item['id']}",
-                            itemTitle: "{$item['title']}"
-                        },
-                        dataType: 'json',
-                        error: function() {},
-                        success: function() {}
-                    });
-                    $('#owner').text($('#detail #section2 input[name="name"]').val());
-                    $('#highest').text("¥ " + $('#detail #section2 input[name="price"]').val());
-                }
-            }
-        } else {
-            alert("请填写您的出价");
-        }
-    });
-
 });
 </script>

@@ -49,7 +49,7 @@ textarea.form-control:focus {
 			<th>加价</th>
 			<th>数量</th>
 			<th>捐赠者</th>
-			<th>操作</th>
+			<th style="min-width:60px;">操作</th>
 		</tr>
 		<foreach name="items" item="v">
 			<tr name="{$v['id']}">
@@ -59,7 +59,7 @@ textarea.form-control:focus {
 				<td class="step">{$v.step}</td>
 				<td class="amount">{$v.amount}</td>
 				<td class="donator">{$v.donator}</td>
-				<td>
+				<td style="min-width:60px;">
 					<a href="{:U('Admin/item_edit', array('id'=>$v['id']))}" style="margin-right:10px;">编辑</a>
 					<a href="{:U('Admin/item_delete', array('id'=>$v['id']))}">删除</a>
 				</td>

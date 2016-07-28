@@ -1,6 +1,71 @@
 <style>
-	
+nav {
+	display: none;
+}
+input.form-control {
+	margin: 0 auto;
+	width: 180px;
+	display: inline-block;
+	padding-left: 45px;
+}
+#submit, #register {
+	margin: 0 auto;
+	background-color: transparent;
+	border-color: #444;
+	color: #444;
+	margin-top: 40px;
+}
+#submit:hover, #register:hover {
+	color: #fff;
+	background-color: #444;
+	border-color: #444;
+}
 </style>
-<div id="login">
-	这里是login
-</div>
+<form action="{:U('Login/login_handle')}" method="post">
+    <div style="margin-top:80px;text-align:center;">
+        <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
+        <div style="position:relative;left:-20px;">
+            <span style="margin-right:10px;position:relative;left:42px;">手机</span>
+            <input type="text" name="cellphone" class="form-control" placeholder="">
+        </div>
+        <div style="position:relative;left:-20px;">
+            <span style="margin-right:10px;position:relative;left:42px;">密码</span>
+            <input type="password" name="password" class="form-control" placeholder="">
+        </div>
+    </div>
+    <if condition="$error neq ''">
+        <p style="color:#dc2727;font-size:13px;text-align:center;margin-top:15px;margin-bottom:-20px;">{$error}</p>
+    </if>
+    <div style="text-align:center;">
+        <button class="btn btn-default disabled" id="submit" style="margin-right:5px;">登录</button>
+        <a href="{:U('Login/register')}" class="btn btn-default" id="register" style="margin-left:5px;">注册</a>
+    </div>
+</form>
+<script>
+$(document).ready(function() {
+    var cellphone = '';
+    var password = '';
+
+    $('input[name="cellphone"]').keyup(function(event) {
+        cellphone = $(this).val();
+
+        if (cellphone != '' && password != '') {
+            $('#submit').removeClass('disabled');
+        }
+        else {
+            $('#submit').addClass('disabled');
+        }
+    });
+
+    $('input[name="password"]').keyup(function(event) {
+        password = $(this).val();
+
+        if (cellphone != '' && password != '') {
+            $('#submit').removeClass('disabled');
+        }
+        else {
+            $('#submit').addClass('disabled');
+        }
+    });
+});
+</script>
