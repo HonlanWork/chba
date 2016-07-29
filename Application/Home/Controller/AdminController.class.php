@@ -209,4 +209,29 @@ class AdminController extends Controller {
         layout('admin');
     	$this->display();
     }
+
+    public function result_data() {
+        $auction = M('auction')->where(array('status'=>'当前'))->find();
+        $items = M('item')->where(array('auction_id'=>$auction['id']))->order('number asc')->select();
+
+        for ($i = 0; $i < count($items); $i++) { 
+            $actions = M('action')->where(array('auction_id'=>$auction['id'], 'item_id'=>$items[$i]['id']))->order('price desc')->select();
+            if (count($actions) <= $items[$i]['amount']) {
+                $tmp = '';
+                for ($j = 0; $j < count($actions); $j++) { 
+                    $tmp .= $actions[$j]['name'].' '.$actions[$j]['price'].'<br/>'; 
+                }
+                $items[$i]['result'] = $tmp;
+            }
+            else {
+                $tmp = '';
+                for ($j = 0; $j < $items[$i]['amount']; $j++) { 
+                    $tmp .= $actions[$j]['name'].' '.$actions[$j]['price'].'<br/>'; 
+                }
+                $items[$i]['result'] = $tmp;
+            }
+        }
+
+        echo json_encode(array('data'=>$items));
+    }
 }

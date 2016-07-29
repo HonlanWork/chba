@@ -12,7 +12,7 @@
     cursor: pointer;
 }
 
-#main .item a {
+#main #items a {
     color: #444;
     text-decoration: none;
 }
@@ -34,18 +34,19 @@
 </style>
 <div style="padding:40px 20px;text-align:center;">
     <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
-    <h4 style="font-size:16px;margin-bottom:15px;">{$auction.title}</h4>
+    <h4 style="font-size:16px;margin-bottom:15px;color:#fff;">{$auction.title}</h4>
     <p style="margin-bottom:5px;">开始时间<span style="margin-left:16px;">{$auction.begintime|date='Y-m-d H:i:s',###}</span></p>
     <p style="margin-bottom:0;">结束时间<span style="margin-left:16px;">{$auction.endtime|date='Y-m-d H:i:s',###}</span></p>
 </div>
 <div id="items">
     <foreach name="items" item="v">
-        <div class="item">
-            <a href="{:U('Index/detail',array('id'=>$v['id']))}">
+        <a href="{:U('Index/detail',array('id'=>$v['id']))}">
+            <div class="item">
+            
                 <img src="__PUBLIC__{$v.thumbnail}">
                 <p>{$v.title}</p>
-            </a>
-        </div>
+            </div>
+        </a>
     </foreach>
 </div>
 <script>

@@ -1,0 +1,59 @@
+<style>
+nav {
+    display: none;
+}
+#main {
+    margin: 50px;
+    padding: 30px;
+    position: relative;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 2px 2px 2px rgba(20, 20, 20, 0.4);
+}
+#result, #result th {
+    text-align: center;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    border-color: #999;
+}
+
+</style>
+<a href="{:U('Admin/index')}" style="text-decoration:none;"><h3 style="text-align:center;color:#333;margin-bottom:40px;">当前竞拍排行</h3></a>
+<table id="result" class="table" style="margin-bottom:0;">
+    <tr>
+        <th style="min-width:60px;">序号</th>
+        <th>名称</th>
+        <th style="min-width:60px;">数量</th>
+        <th style="min-width:200px;">当前最高价和出价者</th>
+    </tr>
+</table>
+<script>
+$(document).ready(function() {
+    get_data();
+
+    setInterval(function(){
+        get_data();
+    }, 10000);
+
+    function get_data() {
+        $.ajax({
+            url: '{:U("Admin/result_data")}',
+            type: 'GET',
+            dataType: 'json',
+            data: {},
+        })
+        .done(function(data) {
+            data = data['data'];
+            $('#result tr.item').remove();
+            for (var i = 0; i < data.length; i++) {
+                $('#result').append("<tr class='item'><td>" + data[i]['number'] + "</td><td>" + data[i]['title'] + "</td><td>" + data[i]['amount'] + "</td><td>" + data[i]['result'] + "</td></tr>");
+            }
+        })
+        .fail(function() {
+        })
+        .always(function() {
+        });
+    }
+});
+</script>

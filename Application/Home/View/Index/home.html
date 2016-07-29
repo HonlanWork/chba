@@ -1,54 +1,34 @@
 <style>
-#result {
-    padding: 10px 30px 40px 30px;
-    background-color: #f4f4f4;
-}
-
-#result img {
-    width: 100%;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    box-shadow: 2px 2px 3px rgba(40, 40, 40, 0.3);
-}
-
-#result .item {
-	display: inline-block;
-	width: 46%;
-	margin-right: 4%;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    font-size: 10px;
+.action {
+    margin: 10px;
+    padding: 10px;
+    position: relative;
     border-radius: 5px;
-    background-color: #fbfbfb;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 2px 2px 2px rgba(20, 20, 20, 0.4);
 }
-
-#result .item span {
-    margin-left: 5px;
-}
-#result .item h4 {
-	margin-top: 0;
-}
-
-#result .item .item_info {
-    padding: 0px 10px;
-}
-
-#result a,
-#result a:hover {
-    text-decoration: none;
+.action h5 {
+    margin-top: 0;
 }
 </style>
-<div id="result">
-    <h3>当前拍卖排行</h3>
-    <foreach name="items" item="v">
-        <div class="item">
-            <a href="{:U('Index/detail',array('id'=>$v['id']))}"><img src="__PUBLIC__{$v['thumbnail']}"></a>
-            <div class="item_info">
-                <a href="{:U('Index/detail',array('id'=>$v['id']))}"><h5>{$v.title}</h5></a>
-                <p>当前最高价 <span>{$v.highest}</span></p>
-                <p>出价者 <span>{$v.owner}</span></p>
-            </div>
+<h4 style="margin-top:50px;margin-bottom:30px;text-align:center;color:#fff;">我的竞拍记录</h4>
+<div id="actions">
+    <foreach name="actions" item="v">
+        <div class="action">
+            <h5><span style="color:#476cb3;margin-right:10px;">{$v.number}</span>{$v.title}</h5>
+            <p style="margin-bottom:5px;color:#476cb3;">竞拍时间<span style="margin-left:10px;color:#333;">{$v.timestamp|date='Y-m-d H:i:s',###}</span></p>
+            <p style="margin-bottom:0;color:#476cb3;">我的出价<span style="margin-left:10px;color:#333;">{$v.price}</span>
+                <if condition="$v['owner'] eq 1">
+                    <span style="color:#7dd300;margin-left:10px;">持有</span>
+                    <else/>
+                    <span style="color:#f56e60;margin-left:10px;">被超过</span>
+                </if>
+            </p>
         </div>
     </foreach>
 </div>
+<script>
+$(document).ready(function() {
+    $('#nav2').addClass('active');
+});
+</script>
