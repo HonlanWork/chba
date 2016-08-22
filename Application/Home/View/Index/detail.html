@@ -1,4 +1,8 @@
 <style>
+#main {
+    padding-top: 70px;
+    padding-bottom: 10px;
+}
 #detail {
     margin: 32px 5% 20px 5%;
     border-radius: 4px;
@@ -101,7 +105,6 @@
     color: white;
     text-align: center;
     padding: 5px;
-    padding-right: 0;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
     margin-top: -25px;
@@ -115,7 +118,6 @@
     color: white;
     text-align: center;
     padding: 5px;
-    padding-left: 0;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     margin-top: -25px;
@@ -145,34 +147,40 @@
         </div>
         <div class="item_basic_info">
             <h4 style="margin-top:30px;margin-bottom:20px;font-size:16px;line-height:1.2;">{$item.number}&nbsp;&nbsp;{$item.title}</h4>
-            <p>捐赠者<span id="donator">{$item.donator}</span></p>
-            <p>起拍价<span id="start">¥ {$item.start}</span></p>
-            <p>最高价<span id="highest">¥ {$item.highest}</span></p>
-            <p>出价者<span id="owner">{$item.owner}</span></p>
-            <p>每次加价<span id="step">¥ {$item.step}</span></p>
-            <p>拍品数量<span id="num">{$item.amount}</span></p>
-            <p>拍卖状态
+            <p>捐赠者-Donator<span id="donator">{$item.donator}</span></p>
+            <p>起拍价-Start<span id="start">¥ {$item.start}</span></p>
+            <p>最高价-Highest<span id="highest">¥ {$item.highest}</span></p>
+            <p>出价者-Owner<span id="owner">{$item.owner}</span></p>
+            <p>每次加价-Increase<span id="step">¥ {$item.step}</span></p>
+            <p>拍品数量-Amount<span id="num">{$item.amount}</span></p>
+            <p>拍卖状态-Status
                 <if condition="$auction['begintime'] gt $now">
-                    <span id="status">未开始</span>
+                    <span id="status">未开始-Not Started</span>
                     <elseif condition="$auction['endtime'] lt $now" />
-                    <span id="status">已结束</span>
+                    <span id="status">已结束-Ended</span>
                     <else/>
-                    <span id="status">进行中</span>
+                    <span id="status">进行中-In Process</span>
                 </if>
             </p>
-            <p>距离结束<span id="deadline" style="display:none;">{$auction.endtime}</span><span id="timeleft"></span></p>
+            <p>距离结束-Time left<span id="deadline" style="display:none;">{$auction.endtime}</span><span id="timeleft"></span></p>
             <if condition="$auction['begintime'] lt $now and $auction['endtime'] gt $now">
-                <p id="want"><a href="{:U('Index/action', array('id'=>$item['id'], 'user_id'=>$_SESSION['uid']))}"><span>我要出价</span></a></p>
+                <div>
+                    <input type="number" class="form-control" name="price" placeholder="您的出价-Your Price" style="width:180px;margin:20px auto;border-color:#f56e60;">
+                </div>
+                <p id="error" style="color:#f5b960;text-align:center;font-size:13px;"></p>
+                <p id="want"><span>我要出价 - I Want It</span></p>
+                <span style="display:none;" id="item_id">{$item.id}</span>
+                <span style="display:none;" id="user_id">{$_SESSION.uid}</span>
             </if>
         </div>
     </div>
     <div id="section3">
         <if condition="$item['description']">
-            <h4>拍品介绍</h4>
+            <h4>拍品介绍-Description</h4>
             <p style="margin-bottom:20px;">{$item.description}</p>
         </if>
         <if condition="$item['donatorDesc']">
-            <h4>捐赠者介绍</h4>
+            <h4>捐赠者介绍-Donator</h4>
             <p>{$item.donatorDesc}</p>
         </if>
     </div>
@@ -180,13 +188,15 @@
     <div id="previous">
         <a href="{:U('Index/detail',array('id'=>$previous))}" style="color:white;text-decoration:none;">
             <p style="margin-bottom:0;">上一件
-                <br>拍品</p>
+                <br>拍品
+                <br>Previous</p>
         </a>
     </div>
     <div id="next">
         <a href="{:U('Index/detail',array('id'=>$next))}" style="color:white;text-decoration:none;">
             <p style="margin-bottom:0;">下一件
-                <br>拍品</p>
+                <br>拍品
+                <br>Next</p>
         </a>
     </div>
 </div>
@@ -198,9 +208,7 @@ $(document).ready(function() {
     timer();
 
     function timer() {
-        console.log($('#status').text());
-        if ($('#status').text() == '进行中') {
-            console.log($('#deadline').text());
+        if ($('#status').text() == '进行中-In Process') {
             var ts = parseInt($('#deadline').text()) * 1000 - (new Date()).valueOf();
             var dd = parseInt(ts / 1000 / 60 / 60 / 24, 10);
             var hh = parseInt(ts / 1000 / 60 / 60 % 24, 10);
@@ -210,7 +218,7 @@ $(document).ready(function() {
             hh = checkTime(hh);
             mm = checkTime(mm);
             ss = checkTime(ss);
-            document.getElementById("timeleft").innerHTML = dd + "天" + hh + "时" + mm + "分" + ss + "秒";
+            document.getElementById("timeleft").innerHTML = dd + " Days " + hh + ":" + mm + ":" + ss;
         } else {
             document.getElementById("timeleft").innerHTML = "-";
         }
@@ -226,5 +234,43 @@ $(document).ready(function() {
         }
         return i;
     }
+
+    $('#want span').click(function(event) {
+        var price = $('input[name="price"]').val();
+        if (price == '') {
+            $('#error').text('竞拍金额不能为空 - Your Price is Empty').show();
+        }
+        else {
+            price = parseFloat(price);
+            $.ajax({
+                url: '{:U("Index/action")}',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    price: price,
+                    item_id: $('#item_id').text(),
+                    user_id: $('#user_id').text()
+                },
+            })
+            .done(function(data) {
+                if (data['result'] == 'error') {
+                    $('#error').text(data['error']).show();
+                }
+                else if (data['result'] == 'ok') {
+                    $('#error').text('页面即将刷新 - The page is going to refresh').show();
+                    $('#want span').text("出价成功 - Bidding Success");
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 3000);
+                }
+            })
+            .fail(function() {
+                console.log("error");
+            })
+            .always(function() {
+                console.log("complete");
+            });
+        }
+    });
 });
 </script>

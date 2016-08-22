@@ -1,10 +1,14 @@
 <style>
+#main {
+    padding-top: 70px;
+    padding-bottom: 10px;
+}
 #main .item {
-    margin: 10px;
-    padding: 10px;
+    margin: 15px;
+    padding: 15px;
     position: relative;
     border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: #fff;
     box-shadow: 2px 2px 2px rgba(20, 20, 20, 0.4);
 }
 
@@ -13,7 +17,7 @@
 }
 
 #main #items a {
-    color: #444;
+    color: #555;
     text-decoration: none;
 }
 
@@ -25,8 +29,9 @@
 
 #main .item p {
     width: 55%;
+    line-height: 1.5;
     display: inline-block;
-    font-size: 12px;
+    font-size: 13px;
     margin-bottom: 0;
     margin-left: 5%;
     vertical-align: top;
@@ -34,17 +39,33 @@
 </style>
 <div style="padding:40px 20px;text-align:center;">
     <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
-    <h4 style="font-size:16px;margin-bottom:15px;color:#fff;">{$auction.title}</h4>
-    <p style="margin-bottom:5px;">开始时间<span style="margin-left:16px;">{$auction.begintime|date='Y-m-d H:i:s',###}</span></p>
-    <p style="margin-bottom:0;">结束时间<span style="margin-left:16px;">{$auction.endtime|date='Y-m-d H:i:s',###}</span></p>
+    <h4 style="font-size:16px;margin-bottom:15px;color:#333;">{$auction.title}</h4>
+    <p style="margin-bottom:5px;">开始时间-From<span style="margin-left:16px;">{$auction.begintime|date='Y-m-d H:i:s',###}</span></p>
+    <p style="margin-bottom:0;">结束时间-To<span style="margin-left:16px;">{$auction.endtime|date='Y-m-d H:i:s',###}</span></p>
+</div>
+<div style="font-size:13px;text-align:center;margin-bottom:5px;">
+    <span>类别-Categories</span>
+    <select class="form-control" style="color:#333;display:inline-block;width:200px;font-size:13px;margin-left:10px;">
+        <option value="全部 All" selected="selected">全部 All</option>
+        <option value="机票、酒店、度假村等旅行产品 Travel-related Items">机票、酒店、度假村等旅行产品 Travel-related Items</option>
+        <option value="体验服务类 Unique Experiences, Luxury / Fashion">体验服务类 Unique Experiences, Luxury / Fashion</option>
+        <option value="零售类产品 Retail Goods Items">零售类产品 Retail Goods Items</option>
+        <option value="收藏品 Collectables Items">收藏品 Collectables Items</option>
+        <option value="工艺与艺术品类 Displayable Art-pieces">工艺与艺术品类 Displayable Art-pieces</option>
+        <option value="非旅行类礼券 Service Vouchers">非旅行类礼券 Service Vouchers</option>
+        <option value="儿童作品 Children's Art Works">儿童作品 Children's Art Works</option>
+    </select>
+</div>
+<div style="text-align:center;margin-bottom:25px;">
+    <span>搜索-Search</span>
+    <input type="text" id="search" class="form-control" style="color:#333;display:inline-block;width:200px;font-size:13px;margin-left:30px;">
 </div>
 <div id="items">
     <foreach name="items" item="v">
-        <a href="{:U('Index/detail',array('id'=>$v['id']))}">
+        <a href="{:U('Index/detail',array('id'=>$v['id']))}" name="{$v.category}">
             <div class="item">
-            
                 <img src="__PUBLIC__{$v.thumbnail}">
-                <p>{$v.title}</p>
+                <p><span class="number">{$v.number}</span> <span class="title">{$v.title}</span> <span style="color:#f56e60;margin-left:10px;">{$v.highest}</span></p>
             </div>
         </a>
     </foreach>
@@ -52,5 +73,45 @@
 <script>
 $(document).ready(function() {
     $('#nav1').addClass('active');
+
+    $('select').change(function(event) {
+        var category = $('select option:selected').text();
+        if (category == "全部 All") {
+            $('#items>a').show();   
+        }
+        else {
+            $('#items>a').hide();
+            $('#items>a[name="' + category + '"]').show();
+        }
+    });
+
+    $('#search').keyup(function(event) {
+        var keyword = $(this).val();
+        if (keyword == '') {
+            $('#items>a').show();
+        } else {
+            $('#items>a').each(function(index, el) {
+                var flag = false;
+                var $p = $(this);
+                
+                $p.children('div').children('p').children('span.number').each(function(index, el) {
+                    if ($(this).text().indexOf(keyword) >= 0) {
+                        flag = true;
+                    }
+                });
+                $p.children('div').children('p').children('span.title').each(function(index, el) {
+                    if ($(this).text().indexOf(keyword) >= 0) {
+                        flag = true;
+                    }
+                });
+
+                if (flag) {
+                    $p.show();
+                } else {
+                    $p.hide();
+                }
+            });
+        }
+    });
 });
 </script>

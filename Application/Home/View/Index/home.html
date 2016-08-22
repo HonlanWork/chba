@@ -1,34 +1,90 @@
 <style>
-.action {
-    margin: 10px;
-    padding: 10px;
+#main {
+    padding-top: 85px;
+    padding-bottom: 10px;
+}
+#want {
+    font-size: 13px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+#want span {
+    color: #f56e60;
+    border: 1px solid #f56e60;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+#want span:hover {
+    cursor: pointer;
+    background-color: #f56e60;
+    color: #fff;
+}
+.action, .result {
+    margin: 15px;
+    padding: 15px;
     position: relative;
     border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: #fff;
     box-shadow: 2px 2px 2px rgba(20, 20, 20, 0.4);
 }
-.action h5 {
+.action h5, .result h5 {
     margin-top: 0;
+    line-height: 1.2;
+}
+.result h5 {
+    margin-bottom: 0;
+}
+.action h5 a, .result h5 a {
+    color: #333;
+    text-decoration: none;
+}
+.action h5 a:hover, .result h5 a {
+    text-decoration: none;
 }
 </style>
-<h4 style="margin-top:50px;margin-bottom:30px;text-align:center;color:#fff;">我的竞拍记录</h4>
-<div id="actions">
-    <foreach name="actions" item="v">
-        <div class="action">
-            <h5><span style="color:#476cb3;margin-right:10px;">{$v.number}</span>{$v.title}</h5>
-            <p style="margin-bottom:5px;color:#476cb3;">竞拍时间<span style="margin-left:10px;color:#333;">{$v.timestamp|date='Y-m-d H:i:s',###}</span></p>
-            <p style="margin-bottom:0;color:#476cb3;">我的出价<span style="margin-left:10px;color:#333;">{$v.price}</span>
-                <if condition="$v['owner'] eq 1">
-                    <span style="color:#7dd300;margin-left:10px;">持有</span>
-                    <else/>
-                    <span style="color:#f56e60;margin-left:10px;">被超过</span>
+<if condition="$auction['endtime'] lt $now">
+    <span id="isover" style="display:none;">1</span>
+    <div id="results" style="margin:20px 15px;">
+        <h4 style="text-align:center;margin:30px 15px 10px 15px;color:#f56e60;">竞拍已结束，您获得了以下拍品</h4>
+        <h5 style="text-align:center;margin:10px 15px 10px 15px;color:#f56e60;">The auction is over, and you win these items</h5>
+        <foreach name="results" item="v">
+            <div class="result">
+                <h5><a href="{:U('Index/detail', array('id'=>$v['id']))}"><span style="color:#000;margin-right:10px;">{$v.number}</span>{$v.title}</a></h5>
+                <p style="color:#f56e60;margin-bottom:-2px;margin-top:5px;">{$v.highest}</p>
+            </div>
+        </foreach>
+    </div>
+    <else/>
+    <span id="isover" style="display:none;">0</span>
+    <div id="actions">
+        <foreach name="actions" item="v">
+            <div class="action">
+                <h5><a href="{:U('Index/detail', array('id'=>$v['item_id']))}"><span style="color:#000;margin-right:10px;">{$v.number}</span>{$v.title}</a></h5>
+                <p style="margin-bottom:5px;color:#666;font-size:13px;">竞拍时间-Time<span style="margin-left:10px;color:#333;">{$v.timestamp|date='Y-m-d H:i:s',###}</span></p>
+                <p style="margin-bottom:5px;color:#666;font-size:13px;">我的出价-Price<span style="margin-left:10px;color:#f56e60;">{$v.price}</span>
+                </p>
+                <p style="margin-bottom:0;color:#666;font-size:13px;">当前最高-Highest<span style="margin-left:10px;color:#f56e60;">{$v.highest}</span></p>
+                <if condition="$v['price'] lt $v['highest']">
+                    <a href="{:U('Index/detail', array('id'=>$v['item_id']))}">
+                        <p id="want"><span>我要加价 - Bid Again</span></p>
+                    </a>
                 </if>
-            </p>
-        </div>
-    </foreach>
-</div>
+            </div>
+        </foreach>
+    </div>
+</if>
 <script>
 $(document).ready(function() {
     $('#nav2').addClass('active');
+
+    if ($('#isover').text() == '0') {
+        setTimeout(function(){
+            window.location.reload();
+        }, 10000);
+    }
 });
 </script>

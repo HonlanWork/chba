@@ -4,7 +4,6 @@ use Think\Controller;
 class LoginController extends Controller {
 	public function login() {
         $this->error = I('error');
-        echo $this->error;
         $this->display();
     }
 
@@ -21,7 +20,7 @@ class LoginController extends Controller {
             else {
                 $user = M('user')->where(array('cellphone'=>I('cellphone'), 'password'=>md5(I('password'))))->find();
                 session('uid', $user['id']);
-                $this->redirect('Index/index');
+                $this->success('登录成功', U('Index/index'), 3);
             }
         }
     }
@@ -32,13 +31,23 @@ class LoginController extends Controller {
     }
 
     public function register_handle() {
-        $count = M('user')->where(array('name'=>I('name'), 'cellphone'=>I('cellphone')))->count();
+        $count = M('user')->where(array('cellphone'=>I('cellphone')))->count();
         if ($count > 0) {
             $this->redirect('Login/register', array('error'=>'该手机号已经注册'));
         }
         else {
-            M('user')->data(array('name'=>I('name'), 'company'=>I('company'), 'gender'=>I('gender'), 'cellphone'=>I('cellphone'), 'password'=>md5(I('password'))))->add();
-            $this->redirect('Login/login');
+            M('user')->data(array('name'=>I('name'), 'cellphone'=>I('cellphone'), 'password'=>md5(I('password'))))->add();
+            $this->success('注册成功', U('Login/login'), 3);
+        }
+    }
+
+    public function validate_cellphone() {
+        $count = M('user')->where(array('cellphone'=>I('cellphone')))->count();
+        if ($count > 0) {
+            echo json_encode(array('error'=>'该手机号已经注册'));
+        }
+        else {
+            echo json_encode(array('error'=>''));
         }
     }
 

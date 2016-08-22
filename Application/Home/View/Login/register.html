@@ -29,14 +29,6 @@ input.form-control {
             <input type="text" name="name" class="form-control" placeholder="">
         </div>
         <div style="position:relative;left:-20px;">
-            <span style="margin-right:10px;position:relative;left:42px;">公司</span>
-            <input type="text" name="company" class="form-control" placeholder="">
-        </div>
-        <div style="position:relative;left:-20px;">
-            <span style="margin-right:10px;position:relative;left:42px;">性别</span>
-            <input type="text" name="gender" class="form-control" placeholder="">
-        </div>
-        <div style="position:relative;left:-20px;">
             <span style="margin-right:10px;position:relative;left:42px;">手机</span>
             <input type="text" name="cellphone" class="form-control" placeholder="">
         </div>
@@ -46,7 +38,9 @@ input.form-control {
         </div>
     </div>
     <if condition="$error neq ''">
-        <p style="color:#dc2727;font-size:13px;text-align:center;margin-top:15px;margin-bottom:-20px;">{$error}</p>
+        <p style="color:#dc2727;font-size:13px;text-align:center;margin-top:15px;margin-bottom:-20px;" id="error">{$error}</p>
+        <else/>
+        <p style="color:#dc2727;font-size:13px;text-align:center;margin-top:15px;margin-bottom:-20px;display:none;" id="error">{$error}</p>
     </if>
     <div style="text-align:center;">
         <button class="btn btn-default disabled" id="submit" style="margin-right:5px;">注册</button>
@@ -56,39 +50,16 @@ input.form-control {
 <script>
 $(document).ready(function() {
     var name = '';
-    var company = '';
-    var gender = '';
     var cellphone = '';
     var password = '';
 
     $('input[name="name"]').keyup(function(event) {
         name = $(this).val();
+        cellphone = $('input[name="cellphone"]').val();
+        password = $('input[name="password"]').val();
 
-        if (name != '' && company != '' && gender != '' && cellphone != '' && password != '') {
-            $('#submit').removeClass('disabled');
-        }
-        else {
-            $('#submit').addClass('disabled');
-        }
-        
-    });
 
-    $('input[name="company"]').keyup(function(event) {
-        company = $(this).val();
-
-        if (name != '' && company != '' && gender != '' && cellphone != '' && password != '') {
-            $('#submit').removeClass('disabled');
-        }
-        else {
-            $('#submit').addClass('disabled');
-        }
-        
-    });
-
-    $('input[name="gender"]').keyup(function(event) {
-        gender = $(this).val();
-
-        if (name != '' && company != '' && gender != '' && cellphone != '' && password != '') {
+        if (name != '' && cellphone != '' && password != '' && cellphone.length == 11) {
             $('#submit').removeClass('disabled');
         }
         else {
@@ -98,9 +69,37 @@ $(document).ready(function() {
     });
 
     $('input[name="cellphone"]').keyup(function(event) {
+        name = $('input[name="name"]').val();
+        password = $('input[name="password"]').val();
         cellphone = $(this).val();
 
-        if (name != '' && company != '' && gender != '' && cellphone != '' && password != '') {
+        if (cellphone.length == 11) {
+            $.ajax({
+                url: "{:U('Login/validate_cellphone')}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    cellphone: cellphone
+                },
+            })
+            .done(function(data) {
+                if (data['error'] == '') {
+                    $('#error').hide();
+                }
+                else {
+                    $('#error').text(data['error']).show();
+                }
+            })
+            .fail(function() {
+                console.log("error");
+            })
+            .always(function() {
+                console.log("complete");
+            });
+            
+        }
+
+        if (name != '' && cellphone != '' && password != '' && cellphone.length == 11) {
             $('#submit').removeClass('disabled');
         }
         else {
@@ -111,8 +110,10 @@ $(document).ready(function() {
 
     $('input[name="password"]').keyup(function(event) {
         password = $(this).val();
+        cellphone = $('input[name="cellphone"]').val();
+        name = $('input[name="name"]').val();
 
-        if (name != '' && company != '' && gender != '' && cellphone != '' && password != '') {
+        if (name != '' && cellphone != '' && password != '' && cellphone.length == 11) {
             $('#submit').removeClass('disabled');
         }
         else {

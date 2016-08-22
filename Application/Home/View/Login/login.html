@@ -48,8 +48,9 @@ $(document).ready(function() {
 
     $('input[name="cellphone"]').keyup(function(event) {
         cellphone = $(this).val();
+        password = $('input[name="password"]').val();
 
-        if (cellphone != '' && password != '') {
+        if (cellphone != '' && password != '' && cellphone.length == 11) {
             $('#submit').removeClass('disabled');
         }
         else {
@@ -58,9 +59,10 @@ $(document).ready(function() {
     });
 
     $('input[name="password"]').keyup(function(event) {
+        cellphone = $('input[name="cellphone"]').val();
         password = $(this).val();
 
-        if (cellphone != '' && password != '') {
+        if (cellphone != '' && password != '' && cellphone.length == 11) {
             $('#submit').removeClass('disabled');
         }
         else {

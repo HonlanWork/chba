@@ -26,17 +26,47 @@ class IndexController extends Controller {
                 continue;
             }
             $tmp = $tmp[0];
-            $owner = M('user')->where(array('id'=>$items[$i]['owner']))->find();
-            if ($tmp['name'] == $owner['name']) {
-                $tmp['owner'] = 1;
-            }
-            else {
-                $tmp['owner'] = 0;
-            }
+            $tmp['highest'] = $items[$i]['highest'];
+            
             $actions[] = $tmp;
         }
 
         $this->actions = $actions;
+
+        $results = [];
+        for ($i = 0; $i < count($items); $i++) { 
+            $tmp = M('action')->where(array('item_id'=>$items[$i]['id'], 'user_id'=>$_SESSION['uid']))->order('timestamp desc')->select();
+            if (count($tmp) == 0) {
+                continue;
+            }
+
+            $tmp = M('action')->where(array('item_id'=>$items[$i]['id']))->order('timestamp desc')->select();
+            $users = array();
+            $rank = array();
+            for ($j = 0; $j < count($tmp); $j++) { 
+                if (!array_key_exists($tmp[$j]['user_id'], $users)) {
+                    $users[$tmp[$j]['user_id']] = $tmp[$j]['price'];
+                    $rank[] = array('user_id'=>$tmp[$j]['user_id'], 'price'=>$tmp[$j]['price']);
+                }
+            }
+            usort($rank, "cmp");
+
+            $flag = false;
+            for ($j = 0; $j < $items[$i]['amount']; $j++) {
+                if ($rank[$j]['user_id'] == $_SESSION['uid']) {
+                    $flag = true;
+                    break;
+                }
+            }
+            if ($flag) {
+                $results[] = $items[$i];
+            }
+        }
+
+        $this->auction = $auction;
+        $this->results = $results;
+        $this->now = time();
+
         $this->display();
     }
 
@@ -104,35 +134,56 @@ class IndexController extends Controller {
     }
 
     public function action() {
-        $item = M('item')->where(array('id'=>I('id')))->find();
+        $item = M('item')->where(array('id'=>I('item_id')))->find();
         $auction = M('auction')->where(array('status'=>'当前'))->find();
         $user = M('user')->where(array('id'=>I('user_id')))->find();
 
         if ($item['owner'] == $user['id']) {
-            $this->redirect('Index/detail', array('id'=>I('id')));
-        }
-
-        $data = array(
-            'auction_id' => $auction['id'],
-            'user_id' => I('user_id'),
-            'item_id' => I('id'),
-            'timestamp' => time(),
-            'number' => $item['number'],
-            'title' => $item['title'],
-            'name' => $user['name'],
-            'cellphone' => $user['cellphone'],
-            );
-
-        if ($item['highest'] == 0) {
-            $data['price'] = $item['start'];
+            echo json_encode(array('result'=>"error", "error"=>"您已经是最高价出价者了 - You are already owner of the highest price"));
         }
         else {
-            $data['price'] = $item['highest'] + $item['step'];
-        }
-        M('action')->data($data)->add();
-
-        M('item')->where(array('id'=>I('id')))->save(array('highest'=>$data['price'], 'owner'=>$user['id']));
-
-        $this->redirect('Index/detail', array('id'=>I('id')));
+            if ($item['highest'] == 0) {
+                if (I('price') < $item['start']) {
+                    echo json_encode(array('result'=>"error", "error"=>"您的出价不符合要求 - Your price failed to meet the requirements"));
+                }
+                else {
+                    $data = array(
+                        'auction_id' => $auction['id'],
+                        'user_id' => I('user_id'),
+                        'item_id' => I('item_id'),
+                        'timestamp' => time(),
+                        'number' => $item['number'],
+                        'title' => $item['title'],
+                        'name' => $user['name'],
+                        'price' => I('price'),
+                        'cellphone' => $user['cellphone'],
+                        );
+                    M('action')->data($data)->add();
+                    M('item')->where(array('id'=>I('item_id')))->save(array('highest'=>$data['price'], 'owner'=>$user['id']));
+                    echo json_encode(array('result'=>"ok"));
+                }
+            }
+            else {
+                if (I('price') < $item['highest'] + $item['step']) {
+                    echo json_encode(array('result'=>"error", "error"=>"您的出价不符合要求 - Your price failed to meet the requirements"));
+                }
+                else {
+                    $data = array(
+                        'auction_id' => $auction['id'],
+                        'user_id' => I('user_id'),
+                        'item_id' => I('item_id'),
+                        'timestamp' => time(),
+                        'number' => $item['number'],
+                        'title' => $item['title'],
+                        'name' => $user['name'],
+                        'price' => I('price'),
+                        'cellphone' => $user['cellphone'],
+                        );
+                    M('action')->data($data)->add();
+                    M('item')->where(array('id'=>I('item_id')))->save(array('highest'=>$data['price'], 'owner'=>$user['id']));
+                    echo json_encode(array('result'=>"ok"));
+                }
+            }
+        }        
     }
 }

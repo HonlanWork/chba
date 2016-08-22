@@ -5,6 +5,12 @@
     width: 400px;
     padding-left: 89px;
 }
+#main select {
+    color: #333;
+    display: inline-block;
+    width: 311px;
+    margin-left: 89px;
+}
 
 #main span.key {
     width: 70px;
@@ -39,6 +45,7 @@ textarea.form-control:focus {
     <p>开始时间&nbsp;&nbsp;&nbsp;{$auction.begintime|date='Y-m-d H:i:s',###}</p>
     <p style="margin-bottom:0;">结束时间&nbsp;&nbsp;&nbsp;{$auction.endtime|date='Y-m-d H:i:s',###}</p>
 </div>
+<a href="{:U('Admin/item_set_thumb')}" class="btn btn-default" style="margin-bottom:20px;">设置封面图片</a>
 <div class="my_container">
     <h5>当前拍品</h5>
     <table class="table table-hover">
@@ -79,6 +86,18 @@ textarea.form-control:focus {
             <span class="key">拍品名称</span>
             <input type="text" class="form-control value" name="title">
         </div>
+        <div style="margin-top:5px;margin-bottom:5px;border-bottom:1px solid #333;width:401px;padding-bottom:5px;">
+            <span class="key">拍品类别</span>
+            <select name="category" class="form-control">
+                <option value="机票、酒店、度假村等旅行产品 Travel-related Items">机票、酒店、度假村等旅行产品 Travel-related Items</option>
+                <option value="体验服务类 Unique Experiences, Luxury / Fashion">体验服务类 Unique Experiences, Luxury / Fashion</option>
+                <option value="零售类产品 Retail Goods Items">零售类产品 Retail Goods Items</option>
+                <option value="收藏品 Collectables Items">收藏品 Collectables Items</option>
+                <option value="工艺与艺术品类 Displayable Art-pieces">工艺与艺术品类 Displayable Art-pieces</option>
+                <option value="非旅行类礼券 Service Vouchers">非旅行类礼券 Service Vouchers</option>
+                <option value="儿童作品 Children's Art Works">儿童作品 Children's Art Works</option>
+            </select>
+        </div>
         <div>
             <span class="key">起拍价</span>
             <input type="text" class="form-control value" name="start">
@@ -97,11 +116,11 @@ textarea.form-control:focus {
         </div>
         <div style="margin-top:12px;">
             <span class="key">拍品介绍</span>
-            <textarea name="description" class="form-control" cols="30" rows="3"></textarea>
+            <textarea name="description" class="form-control" cols="30" rows="10"></textarea>
         </div>
         <div style="margin-top:12px;">
             <span class="key">捐赠者介绍</span>
-            <textarea name="donatorDesc" class="form-control" cols="30" rows="3"></textarea>
+            <textarea name="donatorDesc" class="form-control" cols="30" rows="10"></textarea>
         </div>
         <div style="margin-top:20px;" class="row" id="images">
             <div class="col-xs-6 col-sm-3 col-md-3 col-lg-3">

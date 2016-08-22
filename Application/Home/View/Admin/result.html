@@ -22,10 +22,10 @@ nav {
 <a href="{:U('Admin/index')}" style="text-decoration:none;"><h3 style="text-align:center;color:#333;margin-bottom:40px;">当前竞拍排行</h3></a>
 <table id="result" class="table" style="margin-bottom:0;">
     <tr>
-        <th style="min-width:60px;">序号</th>
-        <th>名称</th>
-        <th style="min-width:60px;">数量</th>
-        <th style="min-width:200px;">当前最高价和出价者</th>
+        <th style="min-width:60px;">序号<br/>Number</th>
+        <th>名称<br/>Name</th>
+        <th style="min-width:60px;">数量<br/>Amount</th>
+        <th style="min-width:200px;">持有者<br/>Winners</th>
     </tr>
 </table>
 <script>
@@ -44,6 +44,7 @@ $(document).ready(function() {
             data: {},
         })
         .done(function(data) {
+            console.log(data);
             data = data['data'];
             $('#result tr.item').remove();
             for (var i = 0; i < data.length; i++) {

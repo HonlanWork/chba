@@ -12,6 +12,13 @@
     margin-right: -74px;
 }
 
+#main select {
+    color: #333;
+    display: inline-block;
+    width: 311px;
+    margin-left: 89px;
+}
+
 textarea.form-control {
     background-color: transparent;
     border-color: #333;
@@ -44,6 +51,18 @@ textarea.form-control:focus {
         <div>
             <span class="key">拍品名称</span>
             <input type="text" class="form-control value" name="title" value="{$item['title']}">
+        </div>
+        <div style="margin-top:5px;margin-bottom:5px;border-bottom:1px solid #333;width:401px;padding-bottom:5px;">
+            <span class="key">拍品类别</span>
+            <select name="category" class="form-control">
+                <foreach name="categories" item="c">
+                    <if condition="$c eq $item['category']">
+                        <option value="{$c}" selected="selected">{$c}</option>
+                        <else/>
+                        <option value="{$c}">{$c}</option>
+                    </if>
+                </foreach>
+            </select>
         </div>
         <div>
             <span class="key">起拍价</span>

@@ -22,21 +22,23 @@ html {
     padding: 0;
     width: 100%;
     font-family: OpenSans-Light, PingFang SC, Hiragino Sans GB, Microsoft Yahei, Microsoft Jhenghei, sans-serif;
-    background-image: url(__PUBLIC__/img/bg.png);
-    background-size: cover;
-    background-attachment: fixed;
+    background-color: #f5f5f5;
 }
 
 nav {
     background-color: rgba(20, 20, 20, 0.9);
     text-align: center;
-    background-color: #476cb3;
+    background-color: #f5b960;
     height: 63px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 999;
 }
 
 nav div {
-    background-color: #476cb3;
-    border-top: 3px solid #4eb8ec;
+    background-color: #f5b960;
+    border-top: 3px solid #f0f5a5;
     font-size: 12px;
     padding: 18px;
     padding-bottom: 12px;
@@ -47,7 +49,7 @@ nav div {
 }
 
 nav div span {
-    color: #4eb8ec;
+    color: #fff;
     font-size: 16px;
 }
 
@@ -59,8 +61,8 @@ nav div p {
 
 nav div.active,
 nav div:hover {
-    border-color: #7dd300;
-    background-color: #4e77b9;
+    border-color: #ecaf63;
+    background-color: #f56e60;
 }
 
 nav div:hover {
@@ -87,12 +89,12 @@ input.form-control {
     border-left: none;
     border-right: none;
     border-radius: 0;
-    color: #fff;
+    color: #333;
 }
 input.form-control:focus {
     border-color: #333;
     box-shadow: none;
-    color: #fff;
+    color: #333;
 }
 </style>
 
@@ -101,13 +103,13 @@ input.form-control:focus {
         <a href="{:U('Index/index')}">
             <div id="nav1">
                 <span class="glyphicon glyphicon-home"></span>
-                <p>首页</p>
+                <p>首页-Homepage</p>
             </div>
         </a>
         <a href="{:U('Index/home')}">
             <div id="nav2">
                 <span class="glyphicon glyphicon-user"></span>
-                <p>我的</p>
+                <p>我的-My Bids</p>
             </div>
         </a>
     </nav>

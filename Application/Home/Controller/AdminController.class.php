@@ -77,6 +77,7 @@ class AdminController extends Controller {
         $data = array(
             'auction_id' => I('auction_id'),
             'number' => I('number'),
+            'category' => I('category'),
             'title' => I('title'),
             'start' => I('start'),
             'step' => I('step'),
@@ -135,7 +136,35 @@ class AdminController extends Controller {
     public function item_edit(){
         layout('admin');
         $this->item = M('item')->where(array('id'=>I('id')))->find();
+        $categories = array();
+        $categories[] = "机票、酒店、度假村等旅行产品 Travel-related Items";
+        $categories[] = "体验服务类 Unique Experiences, Luxury / Fashion";
+        $categories[] = "零售类产品 Retail Goods Items";
+        $categories[] = "收藏品 Collectables Items";
+        $categories[] = "工艺与艺术品类 Displayable Art-pieces";
+        $categories[] = "非旅行类礼券 Service Vouchers";
+        $categories[] = "儿童作品 Children's Art Works";        
+        $this->categories = $categories;
         $this->display();
+    }
+
+    public function item_set_thumb(){
+        $auction = M('auction')->where(array('status'=>'当前'))->find();
+        $items = M('item')->where(array('auction_id'=>$auction['id']))->select();
+        for ($i = 0; $i < count($items); $i++) {
+            $flag = false; 
+            for ($j = 1; $j <= 6; $j++) {
+                if ($items[$i]['image'.$j] != '') {
+                    M('item')->where(array('id'=>$items[$i]['id']))->save(array('thumbnail'=>$items[$i]['image'.$j]));
+                    $flag = true;
+                    break;
+                }
+            }
+            if (!$flag) {
+                M('item')->where(array('id'=>$items[$i]['id']))->save(array('thumbnail'=>'/img/item.jpg'));
+            }
+        }
+        $this->redirect('Admin/item');
     }
 
     public function item_edit_handle(){
@@ -144,6 +173,7 @@ class AdminController extends Controller {
         $donatorDesc = I('donatorDesc');
         $data = array(
             'number' => I('number'),
+            'category' => I('category'),
             'title' => I('title'),
             'start' => I('start'),
             'step' => I('step'),
@@ -172,6 +202,9 @@ class AdminController extends Controller {
                     unlink($filename);
                     $data['image'.$i] = ''; 
                 }
+            }
+            else {
+                $data['image'.$i] = $old['image'.$i];
             }
         }
         $flag = false;
@@ -215,23 +248,26 @@ class AdminController extends Controller {
         $items = M('item')->where(array('auction_id'=>$auction['id']))->order('number asc')->select();
 
         for ($i = 0; $i < count($items); $i++) { 
-            $actions = M('action')->where(array('auction_id'=>$auction['id'], 'item_id'=>$items[$i]['id']))->order('price desc')->select();
-            if (count($actions) <= $items[$i]['amount']) {
-                $tmp = '';
-                for ($j = 0; $j < count($actions); $j++) { 
-                    $tmp .= $actions[$j]['name'].' '.$actions[$j]['price'].'<br/>'; 
+            $tmp = M('action')->where(array('item_id'=>$items[$i]['id']))->order('timestamp desc')->select();
+            $users = array();
+            $rank = array();
+            for ($j = 0; $j < count($tmp); $j++) { 
+                if (!array_key_exists($tmp[$j]['user_id'], $users)) {
+                    $users[$tmp[$j]['user_id']] = $tmp[$j]['price'];
+                    $rank[] = array('user_id'=>$tmp[$j]['user_id'], 'price'=>$tmp[$j]['price'], 'name'=>$tmp[$j]['name']);
                 }
-                $items[$i]['result'] = $tmp;
             }
-            else {
-                $tmp = '';
-                for ($j = 0; $j < $items[$i]['amount']; $j++) { 
-                    $tmp .= $actions[$j]['name'].' '.$actions[$j]['price'].'<br/>'; 
-                }
-                $items[$i]['result'] = $tmp;
+            usort($rank, "cmp");
+
+            $tmp = '';
+
+            for ($j = 0; $j < $items[$i]['amount']; $j++) {
+                $tmp .= '<p>'.$rank[$j]['name'].' '.$rank[$j]['price'].'</p>';
             }
+            $items[$i]['result'] = $tmp;
         }
 
         echo json_encode(array('data'=>$items));
     }
+
 }

@@ -21,4 +21,11 @@
             return false;
         }
     }
+
+    function cmp($a, $b) {
+        if ($a['price'] == $b['price']) {
+            return 0;
+        }
+        return ($a['price'] > $b['price']) ? -1 : 1;
+    }
 ?>
