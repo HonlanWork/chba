@@ -12,6 +12,7 @@ class IndexController extends Controller {
         $auction = M('auction')->where(array('status'=>'当前'))->find();
         $this->items = M('item')->where(array('auction_id'=>$auction['id']))->select();
         $this->auction = $auction;
+        $this->now = time();
         $this->display();
     }
 

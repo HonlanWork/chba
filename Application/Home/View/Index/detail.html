@@ -148,9 +148,12 @@
         <div class="item_basic_info">
             <h4 style="margin-top:30px;margin-bottom:20px;font-size:16px;line-height:1.2;">{$item.number}&nbsp;&nbsp;{$item.title}</h4>
             <p>捐赠者-Donator<span id="donator">{$item.donator}</span></p>
-            <p>起拍价-Start<span id="start">¥ {$item.start}</span></p>
-            <p>最高价-Highest<span id="highest">¥ {$item.highest}</span></p>
-            <p>出价者-Owner<span id="owner">{$item.owner}</span></p>
+            <if condition="$item['highest'] eq 0">
+                <p>起拍价-Start<span id="start">¥ {$item.start}</span></p>
+                <else/>
+                <p>最高价-Highest<span id="highest">¥ {$item.highest}</span></p>
+                <p>出价者-Owner<span id="owner">{$item.owner}</span></p>
+            </if>
             <p>每次加价-Increase<span id="step">¥ {$item.step}</span></p>
             <p>拍品数量-Amount<span id="num">{$item.amount}</span></p>
             <p>拍卖状态-Status
@@ -160,9 +163,9 @@
                     <span id="status">已结束-Ended</span>
                     <else/>
                     <span id="status">进行中-In Process</span>
+                    <p>距离结束-Time left<span id="deadline" style="display:none;">{$auction.endtime}</span><span id="timeleft"></span></p>
                 </if>
             </p>
-            <p>距离结束-Time left<span id="deadline" style="display:none;">{$auction.endtime}</span><span id="timeleft"></span></p>
             <if condition="$auction['begintime'] lt $now and $auction['endtime'] gt $now">
                 <div>
                     <input type="number" class="form-control" name="price" placeholder="您的出价-Your Price" style="width:180px;margin:20px auto;border-color:#f56e60;">

@@ -22,8 +22,7 @@
 }
 
 #main .item img {
-    display: inline-block;
-    width: 35%;
+    width: 100%;
     border-radius: 5px;
 }
 
@@ -36,13 +35,26 @@
     margin-left: 5%;
     vertical-align: top;
 }
+#status, #timeleft {
+    margin-left: 12px;
+}
 </style>
-<div style="padding:40px 20px;text-align:center;">
+<div style="padding:40px 20px;text-align:center;padding-bottom:30px;">
     <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
-    <h4 style="font-size:16px;margin-bottom:15px;color:#333;">{$auction.title}</h4>
-    <h4 style="font-size:12px;margin-bottom:15px;color:#555;">{$auction.titleen}</h4>
+    <h4 style="font-size:16px;margin-bottom:15px;color:#333;line-height:1.5;">{$auction.title}</h4>
+    <h4 style="font-size:14px;margin-bottom:15px;color:#555;line-height:1.5;">{$auction.titleen}</h4>
     <p style="margin-bottom:5px;">开始时间-From<span style="margin-left:16px;">{$auction.begintime|date='Y-m-d H:i:s',###}</span></p>
-    <p style="margin-bottom:0;">结束时间-To<span style="margin-left:16px;">{$auction.endtime|date='Y-m-d H:i:s',###}</span></p>
+    <p style="margin-bottom:5px;">结束时间-To<span style="margin-left:16px;">{$auction.endtime|date='Y-m-d H:i:s',###}</span></p>
+    <p style="margin-bottom:5px;">拍卖状态-Status
+        <if condition="$auction['begintime'] gt $now">
+            <span id="status">未开始-Not Started</span>
+            <elseif condition="$auction['endtime'] lt $now" />
+            <span id="status">已结束-Ended</span>
+            <else/>
+            <span id="status">进行中-In Process</span>
+            <p>距离结束-Time left<span id="deadline" style="display:none;">{$auction.endtime}</span><span id="timeleft"></span></p>
+        </if>
+    </p>
 </div>
 <div style="font-size:13px;text-align:center;margin-bottom:5px;">
     <span>类别-Categories</span>
@@ -65,8 +77,17 @@
     <foreach name="items" item="v">
         <a href="{:U('Index/detail',array('id'=>$v['id']))}" name="{$v.category}">
             <div class="item">
-                <img src="__PUBLIC__{$v.thumbnail}">
-                <p><span class="number">{$v.number}</span> <span class="title">{$v.title}</span> <span style="color:#f56e60;margin-left:10px;">{$v.highest}</span></p>
+                <div style="display:inline-block;width: 35%;">
+                    <img src="__PUBLIC__{$v.thumbnail}">
+                    <if condition="$v['highest'] eq 0">
+                        <p style="color:#f56e60;text-align:center;width:100%;margin-top:12px;">起拍价-Start</p>
+                        <p style="color:#f56e60;text-align:center;width:100%;">{$v.start}</p>
+                        <else/>
+                        <p style="color:#f56e60;text-align:center;width:100%;margin-top:12px;">最高价-Highest</p>
+                        <p style="color:#f56e60;text-align:center;width:100%;">{$v.highest}</p>
+                    </if>
+                </div>
+                <p><span class="number">{$v.number}</span> <span class="title">{$v.title}</span></p>
             </div>
         </a>
     </foreach>
@@ -74,27 +95,17 @@
 <script>
 $(document).ready(function() {
     $('#nav1').addClass('active');
+    var category = "全部 All";
+    var keyword = "";
 
-    $('select').change(function(event) {
-        var category = $('select option:selected').text();
-        if (category == "全部 All") {
-            $('#items>a').show();   
-        }
-        else {
-            $('#items>a').hide();
-            $('#items>a[name="' + category + '"]').show();
-        }
-    });
+    function filter(){
+        $('#items>a').show();
 
-    $('#search').keyup(function(event) {
-        var keyword = $(this).val();
-        if (keyword == '') {
-            $('#items>a').show();
-        } else {
-            $('#items>a').each(function(index, el) {
-                var flag = false;
-                var $p = $(this);
-                
+        $('#items>a').each(function(index, el) {
+            var flag = false;
+            var $p = $(this);
+
+            if (keyword != '') {
                 $p.children('div').children('p').children('span.number').each(function(index, el) {
                     if ($(this).text().indexOf(keyword) >= 0) {
                         flag = true;
@@ -105,14 +116,63 @@ $(document).ready(function() {
                         flag = true;
                     }
                 });
+            }
+            else {
+                flag = true;
+            }
 
-                if (flag) {
-                    $p.show();
-                } else {
-                    $p.hide();
+            if (category != '全部 All') {
+                if ($p.attr('name') != category) {
+                    flag = false;
                 }
-            });
-        }
+            }
+
+            if (flag) {
+                $p.show();
+            } else {
+                $p.hide();
+            }
+        });
+    }
+
+    $('select').change(function(event) {
+        category = $('select option:selected').text();
+        filter();
     });
+
+    $('#search').keyup(function(event) {
+        keyword = $(this).val();
+        filter();
+    });
+
+    timer();
+
+    function timer() {
+        if ($('#status').text() == '进行中-In Process') {
+            var ts = parseInt($('#deadline').text()) * 1000 - (new Date()).valueOf();
+            var dd = parseInt(ts / 1000 / 60 / 60 / 24, 10);
+            var hh = parseInt(ts / 1000 / 60 / 60 % 24, 10);
+            var mm = parseInt(ts / 1000 / 60 % 60, 10);
+            var ss = parseInt(ts / 1000 % 60, 10);
+            dd = checkTime(dd);
+            hh = checkTime(hh);
+            mm = checkTime(mm);
+            ss = checkTime(ss);
+            document.getElementById("timeleft").innerHTML = dd + " Days " + hh + ":" + mm + ":" + ss;
+        } else {
+            document.getElementById("timeleft").innerHTML = "-";
+        }
+
+        setTimeout(function() {
+            timer();
+        }, 1000);
+    }
+
+    function checkTime(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    }
 });
 </script>
