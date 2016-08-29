@@ -18,7 +18,7 @@
 		</tr>
 		<foreach name="auctions" item="v">
 			<tr name="{$v['id']}">
-				<td class="title">{$v.title}</td>
+				<td><span class="title">{$v.title}</span><br/><span class="titleen">{$v.titleen}</span></td>
 				<td class="begintime">{$v.begintime|date='Y-m-d H:i:s',###}</td>
 				<td class="endtime">{$v.endtime|date='Y-m-d H:i:s',###}</td>
 				<td>{$v.status}</td>
@@ -38,6 +38,10 @@
 			<input type="text" class="form-control" name="title">
 		</div>
 		<div>
+			<span style="margin-right:-60px;">英文名称</span>
+			<input type="text" class="form-control" name="titleen">
+		</div>
+		<div>
 			<span style="margin-right:-60px;">开始时间</span>
 			<input type="datetime-local" class="form-control" name="begintime" value="">
 		</div>
@@ -54,6 +58,10 @@
 		<div>
 			<span style="margin-right:-60px;">晚宴名称</span>
 			<input type="text" class="form-control" name="title">
+		</div>
+		<div>
+			<span style="margin-right:-60px;">英文名称</span>
+			<input type="text" class="form-control" name="titleen">
 		</div>
 		<div>
 			<span style="margin-right:-60px;">开始时间</span>
@@ -76,7 +84,8 @@ $(document).ready(function() {
 		$('#edit_form').show();
 		var $tr = $(this).parent().parent();
 		$('#edit_form input[name="id"]').val($tr.attr('name'));
-		$('#edit_form input[name="title"]').val($tr.children('td.title').text());
+		$('#edit_form input[name="title"]').val($tr.children('td').children('span.title').text());
+		$('#edit_form input[name="titleen"]').val($tr.children('td').children('span.titleen').text());
 		var begintime = $tr.children('td.begintime').text();
 		begintime = begintime.replace(' ', 'T');
 		$('#edit_form input[name="begintime"]').val(begintime);

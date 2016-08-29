@@ -4,9 +4,9 @@ nav {
 }
 input.form-control {
 	margin: 0 auto;
-	width: 180px;
+	width: 250px;
 	display: inline-block;
-	padding-left: 45px;
+	padding-left: 120px;
 }
 #submit, #register {
 	margin: 0 auto;
@@ -24,12 +24,12 @@ input.form-control {
 <form action="{:U('Login/login_handle')}" method="post">
     <div style="margin-top:80px;text-align:center;">
         <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
-        <div style="position:relative;left:-20px;">
-            <span style="margin-right:10px;position:relative;left:42px;">手机</span>
+        <div style="position:relative;left:-50px;">
+            <span style="margin-right:10px;position:relative;left:115px;">手机 Cellphone</span>
             <input type="text" name="cellphone" class="form-control" placeholder="">
         </div>
-        <div style="position:relative;left:-20px;">
-            <span style="margin-right:10px;position:relative;left:42px;">密码</span>
+        <div style="position:relative;left:-50px;">
+            <span style="margin-right:10px;position:relative;left:115px;">密码 Password</span>
             <input type="password" name="password" class="form-control" placeholder="">
         </div>
     </div>
@@ -37,8 +37,8 @@ input.form-control {
         <p style="color:#dc2727;font-size:13px;text-align:center;margin-top:15px;margin-bottom:-20px;">{$error}</p>
     </if>
     <div style="text-align:center;">
-        <button class="btn btn-default disabled" id="submit" style="margin-right:5px;">登录</button>
-        <a href="{:U('Login/register')}" class="btn btn-default" id="register" style="margin-left:5px;">注册</a>
+        <button class="btn btn-default disabled" id="submit" style="margin-right:5px;">登录<br/><span style="font-size:12px;">Log In</span></button>
+        <a href="{:U('Login/register')}" class="btn btn-default" id="register" style="margin-left:5px;">注册<br/><span style="font-size:12px;">Register</span></a>
     </div>
 </form>
 <script>

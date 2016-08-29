@@ -22,6 +22,7 @@ class AdminController extends Controller {
     public function auction_add(){
         $data = array(
             'title' => $_POST['title'],
+            'titleen' => $_POST['titleen'],
             'begintime' => $_POST['begintime'],
             'endtime' => $_POST['endtime'],
             'status' => '');
@@ -55,6 +56,7 @@ class AdminController extends Controller {
     public function auction_edit(){
         $data = array(
             'title' => $_POST['title'],
+            'titleen' => $_POST['titleen'],
             'begintime' => $_POST['begintime'],
             'endtime' => $_POST['endtime']);
         $data['begintime'][10] = ' ';
