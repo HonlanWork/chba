@@ -1,0 +1,79 @@
+<style>
+nav {
+	display: none;
+}
+input.form-control {
+	margin: 0 auto;
+	width: 250px;
+	display: inline-block;
+	padding-left: 125px;
+}
+#submit {
+	margin: 0 auto;
+	background-color: transparent;
+	border-color: #444;
+	color: #444;
+	margin-top: 40px;
+}
+#submit:hover {
+	color: #fff;
+	background-color: #444;
+	border-color: #444;
+}
+</style>
+<form action="{:U('Login/reset_handle')}" method="post">
+    <div style="margin-top:80px;text-align:center;">
+        <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
+        <p style="text-align:center;width:270px;margin:20px auto;">重设密码<br/>Reset Password</p>
+        <div style="position:relative;left:-60px;">
+            <span style="margin-right:10px;position:relative;left:127px;">新密码 Password</span>
+            <input type="text" name="password1" class="form-control" placeholder="">
+        </div>
+        <div style="position:relative;left:-60px;">
+            <span style="margin-right:10px;position:relative;left:125px;">再次输入 Repeat</span>
+            <input type="text" name="password2" class="form-control" placeholder="">
+        </div>
+    </div>
+    <p id="error" style="color:#dc2727;font-size:13px;text-align:center;margin-top:15px;margin-bottom:-20px;display:none;">{$error}</p>
+    <div style="text-align:center;">
+        <button class="btn btn-default disabled" id="submit" style="margin-right:5px;">重设<br/><span style="font-size:12px;">Reset</span></button>
+    </div>
+</form>
+<script>
+$(document).ready(function() {
+    var password1 = '';
+    var password2 = '';
+
+    $('input[name="password1"]').keyup(function(event) {
+        password1 = $(this).val();
+        password2 = $('input[name="password2"]').val();
+
+        if (password1 != '' && password2 != '' && password1 == password2) {
+            $('#submit').removeClass('disabled');
+            $('#error').hide();
+        }
+        else {
+            $('#submit').addClass('disabled');
+            if (password1 != password2) {
+                $('#error').text('两次输入不一致').show();
+            }
+        }
+    });
+
+    $('input[name="password2"]').keyup(function(event) {
+        password2 = $(this).val();
+        password1 = $('input[name="password1"]').val();
+
+        if (password1 != '' && password2 != '' && password1 == password2) {
+            $('#submit').removeClass('disabled');
+            $('#error').hide();
+        }
+        else {
+            $('#submit').addClass('disabled');
+            if (password1 != password2) {
+                $('#error').text('两次输入不一致').show();
+            }
+        }
+    });
+});
+</script>
