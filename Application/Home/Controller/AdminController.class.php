@@ -272,4 +272,15 @@ class AdminController extends Controller {
         echo json_encode(array('data'=>$items));
     }
 
+    public function user() {
+        $this->users = M('user')->select();
+        layout('admin');
+        $this->display();
+    }
+
+    public function reset_password() {
+        M('user')->where(array('id'=>I('id')))->save(array('password'=>md5('chba')));
+        $this->redirect('Admin/user');
+    }
+
 }
