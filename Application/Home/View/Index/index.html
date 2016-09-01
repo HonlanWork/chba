@@ -38,6 +38,61 @@
 #status, #timeleft {
     margin-left: 12px;
 }
+#index .cell {
+    z-index: 999;
+    display: inline-block;
+    width: 200px;
+    padding: 8px;
+    padding-left: 12px;
+    color: rgb(90, 103, 121);
+    background-color: #fff;
+    font-size: 12px;
+    z-index: 999;
+    text-align: left;
+    display: none;
+    box-shadow: 2px 2px 2px rgba(40, 40, 40, 0.4);
+}
+
+#index {
+    display: inline-block;
+    margin-left: 13px;
+    position: relative;
+    z-index: 999;
+}
+
+#index .cell:first-child {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+#index .cell:last-child {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+#index .cell:hover {
+    cursor: pointer;
+    background-color: #50a3ba !important;
+    color: #fff;
+}
+
+#index input {
+    color: #333;
+    border-bottom: 1px solid #333;
+    outline: none;
+    box-shadow: none;
+    width: 200px;
+    font-size: 12px;
+}
+
+#index input:hover {
+    cursor: pointer;
+}
+
+#index.active input {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
 </style>
 <div style="padding:40px 20px;text-align:center;padding-bottom:30px;">
     <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
@@ -58,7 +113,7 @@
 </div>
 <div style="font-size:13px;text-align:center;margin-bottom:5px;">
     <span>类别-Categories</span>
-    <select class="form-control" style="color:#333;display:inline-block;width:200px;font-size:13px;margin-left:10px;">
+    <!-- <select class="form-control" style="color:#333;display:inline-block;width:200px;font-size:13px;margin-left:10px;">
         <option value="全部 All" selected="selected">全部 All</option>
         <option value="机票、酒店、度假村等旅行产品 Travel-related Items">机票、酒店、度假村等旅行产品 Travel-related Items</option>
         <option value="体验服务类 Unique Experiences, Luxury / Fashion">体验服务类 Unique Experiences, Luxury / Fashion</option>
@@ -67,7 +122,20 @@
         <option value="工艺与艺术品类 Displayable Art-pieces">工艺与艺术品类 Displayable Art-pieces</option>
         <option value="非旅行类礼券 Service Vouchers">非旅行类礼券 Service Vouchers</option>
         <option value="儿童作品 Children's Art Works">儿童作品 Children's Art Works</option>
-    </select>
+    </select> -->
+    <div id="index">
+        <input type="text" class="form-control" value="全部 All">
+        <div style="position:absolute;top:0;left:0;width:200px;">
+            <div class="cell" name="全部 All">全部 All</div>
+            <div class="cell" name="机票、酒店、度假村等旅行产品 Travel-related Items" style="background-color:#ffdddd;">机票、酒店、度假村等旅行产品 Travel-related Items</div>
+            <div class="cell" name="体验服务类 Unique Experiences, Luxury / Fashion" style="background-color:#fff0dd;">体验服务类 Unique Experiences, Luxury / Fashion</div>
+            <div class="cell" name="零售类产品 Retail Goods Items" style="background-color:#faffdd;">零售类产品 Retail Goods Items</div>
+            <div class="cell" name="收藏品 Collectables Items" style="background-color:#deffdd;">收藏品 Collectables Items</div>
+            <div class="cell" name="工艺与艺术品类 Displayable Art-pieces" style="background-color:#ddffff;">工艺与艺术品类 Displayable Art-pieces</div>
+            <div class="cell" name="非旅行类礼券 Service Vouchers" style="background-color:#e2ddff;">非旅行类礼券 Service Vouchers</div>
+            <div class="cell" name="儿童作品 Children's Art Works" style="background-color:#faddff;">儿童作品 Children's Art Works</div>
+        </div>
+    </div>
 </div>
 <div style="text-align:center;margin-bottom:25px;">
     <span>搜索-Search</span>
@@ -83,7 +151,7 @@
                         <p style="color:#f56e60;text-align:center;width:100%;margin-top:12px;">起拍价-Start</p>
                         <p style="color:#f56e60;text-align:center;width:100%;">{$v.start}</p>
                         <else/>
-                        <p style="color:#f56e60;text-align:center;width:100%;margin-top:12px;">最高价-Highest</p>
+                        <p style="color:#f56e60;text-align:center;width:100%;margin-top:12px;">目前最高价-Current Price</p>
                         <p style="color:#f56e60;text-align:center;width:100%;">{$v.highest}</p>
                     </if>
                 </div>
@@ -97,6 +165,18 @@ $(document).ready(function() {
     $('#nav1').addClass('active');
     var category = "全部 All";
     var keyword = "";
+
+    $('#index input').click(function(event) {
+        $('#index').addClass('active');
+        $('#index .cell').show();
+    });
+    $('#index .cell').click(function(event) {
+        $('#index').removeClass('active');
+        $('#index input').val($(this).text());
+        $('#index .cell').hide();
+        category = $(this).text();
+        filter();
+    });
 
     function filter(){
         $('#items>a').show();
@@ -134,11 +214,6 @@ $(document).ready(function() {
             }
         });
     }
-
-    $('select').change(function(event) {
-        category = $('select option:selected').text();
-        filter();
-    });
 
     $('#search').keyup(function(event) {
         keyword = $(this).val();
