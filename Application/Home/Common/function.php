@@ -29,6 +29,13 @@
         return ($a['price'] > $b['price']) ? -1 : 1;
     }
 
+    function cmp_bid_count($a, $b) {
+        if ($a['bid_count'] == $b['bid_count']) {
+            return 0;
+        }
+        return ($a['bid_count'] > $b['bid_count']) ? -1 : 1;
+    }
+
     // 发送邮件
     function sendMail($to, $title, $content) {
         Vendor('PHPMailer.PHPMailerAutoload');     

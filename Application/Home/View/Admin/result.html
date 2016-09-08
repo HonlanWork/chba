@@ -2,59 +2,416 @@
 nav {
     display: none;
 }
+
+body,
+html {
+    width: 1920px;
+    height: 1020px;
+}
+
 #main {
-    margin: 50px;
-    padding: 30px;
+    margin: 30px;
+    padding: 20px;
+    height: 1020px;
     position: relative;
     border-radius: 5px;
     background-color: rgba(255, 255, 255, 0.7);
     box-shadow: 2px 2px 2px rgba(20, 20, 20, 0.4);
 }
-#result, #result th {
-    text-align: center;
+
+
+/*1920 * 1080*/
+
+#plot1 .card {
+    width: 23%;
+    height: 430px;
+    margin: 0px 1% 15px 1%;
+    padding: 10px;
+    background-color: #fff;
+    display: inline-block;
+    border-radius: 4px;
+    vertical-align: top;
+    overflow-y: hidden;
 }
 
-.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
-    border-color: #999;
+#plot1 .card .thumb {
+    height: 160px;
+    background-size: cover;
+    background-position: center;
 }
 
+#plot1 .card h5 {
+    color: #555;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+#plot1 .card p {
+    font-size: 13px;
+    color: #8e9aa9;
+    margin-bottom: 5px;
+}
+
+#plot1 .card h6 {
+    font-size: 13px;
+    color: #5a6779;
+    margin-bottom: 5px;
+}
+
+#plot2 {
+    width: 90%;
+    margin-left: 4%;
+    margin-right: 5%;
+    height: 280px;
+    padding: 12px;
+    background-color: #fff !important;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+#plot3 {
+    width: 100%;
+    height: 350px;
+    background-color: #fff !important;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+#plot4 {
+    width: 100%;
+    height: 510px;
+    background-color: #fff !important;
+    border-radius: 4px;
+}
+
+#plot5 {
+    width: 90%;
+    margin-left: 4%;
+    margin-right: 5%;
+    height: 280px;
+    background-color: #fff !important;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+#plot6 {
+    width: 90%;
+    margin-left: 4%;
+    margin-right: 5%;
+    height: 280px;
+    background-color: #fff !important;
+    border-radius: 4px;
+}
 </style>
-<a href="{:U('Admin/index')}" style="text-decoration:none;"><h3 style="text-align:center;color:#333;margin-bottom:40px;">当前竞拍排行</h3></a>
-<table id="result" class="table" style="margin-bottom:0;">
-    <tr>
-        <th style="min-width:60px;">序号<br/>Number</th>
-        <th>名称<br/>Name</th>
-        <th style="min-width:60px;">数量<br/>Amount</th>
-        <th style="min-width:200px;">持有者<br/>Winners</th>
-    </tr>
-</table>
+<script src="__PUBLIC__/js/echarts.min.js"></script>
+<script src="__PUBLIC__/js/westeros.js"></script>
+<script src="__PUBLIC__/js/countUp.js"></script>
+<a href="{:U('Admin/index')}" style="text-decoration:none;">
+    <h4 style="text-align:center;color:#333;margin-bottom:20px;">{$auction.title}</h4>
+    <h5 style="text-align:center;color:#555;margin-bottom:30px;">{$auction.titleen}</h5>
+</a>
+<span id="item_count" style="display:none;">{$count}</span>
+<div style="display:inline-block;width:60%;">
+    <div id="plot1">
+    </div>
+</div>
+<div style="display:inline-block;width:20%;vertical-align:top;">
+    <div id="plot2">
+        <p style="font-size:13px;color:#8e9aa9;">剩余时间 - Time left</p>
+        <h3 style="text-align:center;color:#edafda;font-size:30px;margin-bottom:20px;"><span id="deadline" style="display:none;">{$auction.endtime}</span><span id="timeleft"></span></h3>
+        <p style="font-size:13px;color:#8e9aa9;">参与人数 - Total Persons</p>
+        <h3 style="text-align:center;color:#93b7e3;font-size:30px;margin-bottom:20px;"><span id="user_count">0</span></h3>
+        <p style="font-size:13px;color:#8e9aa9;">竞拍次数 - Total Bidding</p>
+        <h3 style="text-align:center;color:#59c4e6;font-size:30px;margin-bottom:20px;"><span id="bid_count">0</span></h3>
+    </div>
+    <div id="plot5"></div>
+    <div id="plot6"></div>
+</div>
+<div style="display:inline-block;width:19%;vertical-align:top;">
+    <div id="plot3"></div>
+    <div id="plot4"></div>
+</div>
 <script>
 $(document).ready(function() {
-    get_data();
+    timer();
 
-    setInterval(function(){
+    function timer() {
+        var ts = parseInt($('#deadline').text()) * 1000 - (new Date()).valueOf();
+        var dd = parseInt(ts / 1000 / 60 / 60 / 24, 10);
+        var hh = parseInt(ts / 1000 / 60 / 60 % 24, 10);
+        var mm = parseInt(ts / 1000 / 60 % 60, 10);
+        var ss = parseInt(ts / 1000 % 60, 10);
+        dd = checkTime(dd);
+        hh = checkTime(hh);
+        mm = checkTime(mm);
+        ss = checkTime(ss);
+        document.getElementById("timeleft").innerHTML = hh + ":" + mm + ":" + ss;
+
+        setTimeout(function() {
+            timer();
+        }, 1000);
+    }
+
+    function checkTime(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    }
+
+    var items = [];
+    var item_index = -1;
+    var item_count = parseInt($('#item_count').text());
+
+    get_data();
+    setInterval(function() {
         get_data();
     }, 10000);
 
     function get_data() {
         $.ajax({
-            url: '{:U("Admin/result_data")}',
+                url: '{:U("Admin/result_data")}',
+                type: 'GET',
+                dataType: 'json',
+                data: {},
+            })
+            .done(function(data) {
+                items = data['data'];
+
+                var numbers = [];
+                var highests = [];
+                for (var i = 0; i < items.length; i++) {
+                    numbers.push(items[i]['number']);
+                    highests.push(items[i]['highest']);
+                }
+                var plot4 = echarts.init(document.getElementById('plot4'), 'westeros');
+                option = {
+                    title: {
+                        text: '当前价格 - Current Prices',
+                        x: 'center',
+                        y: 'top',
+                        top: 15,
+                        textStyle: {
+                            color: '#555',
+                            fontSize: 16
+                        }
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: 30,
+                        right: 15,
+                        bottom: 15,
+                        containLabel: true
+                    },
+                    xAxis: [{
+                        type: 'value',
+                        inverse: true
+                    }],
+                    yAxis: [{
+                        type: 'category',
+                        data: numbers,
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        position: 'right'
+                    }],
+                    series: [{
+                        name: '当前价格 - Current Prices',
+                        type: 'bar',
+                        data: highests,
+                    }]
+                };
+                plot4.setOption(option);
+            })
+            .fail(function() {})
+            .always(function() {});
+    }
+
+    function plot2() {
+        item_index += 1;
+        if (item_index * 8 >= item_count) {
+            item_index = 0;
+        }
+        var from = item_index * 8;
+        var to = (item_index + 1) * 8;
+        if (to >= item_count) {
+            to = item_count - 1;
+        }
+        $('#plot1 .card').remove();
+        for (var i = from; i <= to; i++) {
+            var $card = $("<div class='card'></div>");
+            var $thumb = $("<div class='thumb'></div>");
+            $thumb.css('background-image', 'url("' + "__PUBLIC__" + items[i]['thumbnail'] + '")');
+            $card.append($thumb);
+            $card.append('<h5><span style="margin-right:10px;">' + items[i]['number'] + '</span>' + items[i]['title'] + '</h5>')
+            $card.append('<h6>数量-Amount<span style="margin-left:10px;">' + items[i]['amount'] + '</span></h6>');
+            $card.append('<div class="winner"><h6>持有者-Winner</h6>' + items[i]['result'] + '</div>');
+            $('#plot1').append($card);
+        }
+    }
+
+    var plot3 = echarts.init(document.getElementById('plot3'), 'westeros');
+    var option = {
+        title: {
+            text: '拍品类别 - Items Categories',
+            x: 'right',
+            show: false
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: {$category_name},
+            padding: 10
+        },
+        series: [{
+            name: '拍品类别 - Items Categories',
+            type: 'pie',
+            radius: '40%',
+            center: ['50%', '75%'],
+            data: {$category},
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            },
+            label: {
+                normal: {
+                    show: false
+                },
+                emphasis: {
+                    show: false
+                }
+            },
+            labelLine: {
+                normal: {
+                    show: false
+                },
+                emphasis: {
+                    show: false
+                }
+            },
+        }]
+    };
+    plot3.setOption(option);
+
+    setInterval(function(){
+        plot2();
+
+        $.ajax({
+            url: '{:U("Admin/stat_data")}',
             type: 'GET',
             dataType: 'json',
             data: {},
         })
         .done(function(data) {
             console.log(data);
-            data = data['data'];
-            $('#result tr.item').remove();
-            for (var i = 0; i < data.length; i++) {
-                $('#result').append("<tr class='item'><td>" + data[i]['number'] + "</td><td>" + data[i]['title'] + "</td><td>" + data[i]['amount'] + "</td><td>" + data[i]['result'] + "</td></tr>");
-            }
+            var user_count = new CountUp("user_count", parseInt($('#user_count').text()), data['user_count'], 0, 1);
+            user_count.start();
+            var bid_count = new CountUp("bid_count", parseInt($('#bid_count').text()), data['bid_count'], 0, 1);
+            bid_count.start();
+
+            var plot5 = echarts.init(document.getElementById('plot5'), 'westeros');
+            option = {
+                color: ['#93b7e3'],
+                title: {
+                    text: '竞拍次数 - Bid Times',
+                    x: 'center',
+                    y: 'top',
+                    top: 15,
+                    textStyle: {
+                        color: '#555',
+                        fontSize: 16
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                grid: {
+                    left: 20,
+                    right: 12,
+                    bottom: 12,
+                    containLabel: true
+                },
+                yAxis: [{
+                    type: 'value',
+                }],
+                xAxis: [{
+                    type: 'category',
+                    data: data['rank_bid_count']['user'],
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                }],
+                series: [{
+                    name: '竞拍次数 - Bid Times',
+                    type: 'bar',
+                    data: data['rank_bid_count']['count'],
+                }]
+            };
+            plot5.setOption(option);
+
+            var plot6 = echarts.init(document.getElementById('plot6'), 'westeros');
+            option = {
+                color: ['#edafda'],
+                title: {
+                    text: '竞拍总额 - Bid Money',
+                    x: 'center',
+                    y: 'top',
+                    top: 15,
+                    textStyle: {
+                        color: '#555',
+                        fontSize: 16
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                grid: {
+                    left: 20,
+                    right: 12,
+                    bottom: 12,
+                    containLabel: true
+                },
+                yAxis: [{
+                    type: 'value',
+                }],
+                xAxis: [{
+                    type: 'category',
+                    data: data['rank_bid_money']['user'],
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                }],
+                series: [{
+                    name: '竞拍总额 - Bid Money',
+                    type: 'bar',
+                    data: data['rank_bid_money']['money'],
+                }]
+            };
+            plot6.setOption(option);
         })
         .fail(function() {
         })
         .always(function() {
         });
-    }
+        
+    }, 5000);
 });
 </script>

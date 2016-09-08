@@ -241,6 +241,29 @@ class AdminController extends Controller {
     }
 
     public function result(){
+        $this->auction = M('auction')->where(array('status'=>'当前'))->find();
+        $this->count =  M('item')->where(array('auction_id'=>$this->auction['id']))->count();
+
+        $all = M('item')->where(array('auction_id'=>$this->auction['id']))->order('number asc')->select();
+        $tmp = array();
+        for ($i = 0; $i < count($all); $i++) { 
+            $cate = $all[$i]['category'];
+            if (array_key_exists($cate, $tmp)) {
+                $tmp[$cate] += 1;
+            }
+            else {
+                $tmp[$cate] = 1;
+            }
+        }
+        $category = array();
+        $category_name = array();
+        foreach ($tmp as $key => $value) {
+            $category[] = array('name'=>$key, 'value'=>$value);
+            $category_name[] = $key;
+        }
+        $this->category = json_encode($category);
+        $this->category_name = json_encode($category_name);
+        
         layout('admin');
     	$this->display();
     }
@@ -270,6 +293,83 @@ class AdminController extends Controller {
         }
 
         echo json_encode(array('data'=>$items));
+    }
+
+    public function stat_data() {
+        $auction = M('auction')->where(array('status'=>'当前'))->find();
+        $bid_count = M('action')->where(array('auction_id'=>$auction['id']))->count();
+        $bids = M('action')->where(array('auction_id'=>$auction['id']))->select();
+
+        // 统计总竞拍人数
+        $tmp = array();
+        for ($i = 0; $i < count($bids); $i++) { 
+            if (!array_key_exists($bids[$i]['user_id'], $tmp)) {
+                $tmp[$bids[$i]['user_id']] = 1;
+            }
+        }
+        $user_count = count($tmp);
+
+        // 统计竞拍次数排名
+        $tmp = array();
+        for ($i = 0; $i < count($bids); $i++) { 
+            if (!array_key_exists($bids[$i]['user_id'], $tmp)) {
+                $tmp[$bids[$i]['user_id']] = 0;
+            }
+            $tmp[$bids[$i]['user_id']] += 1;
+        }
+        $t = array();
+        foreach ($tmp as $key => $value) {
+            $t[] = array('user_id'=>$key, 'bid_count'=>$value);
+        }
+        usort($t, "cmp_bid_count");
+        $t1 = array();
+        $t2 = array();
+        for ($i = 0; $i < count($t) && $i < 5; $i++) { 
+            $user_id = $t[$i]['user_id'];
+            $user = M('user')->where(array('id'=>$user_id))->find();
+            $t1[] = $user['name'];
+            $t2[] = $t[$i]['bid_count'];
+        }
+        $rank_bid_count = array('user'=>$t1, 'count'=>$t2);
+
+        // 统计竞拍总额排名
+        $users = array();
+        for ($i = 0; $i < count($bids); $i++) { 
+            if (!array_key_exists($bids[$i]['user_id'], $users)) {
+                $users[$bids[$i]['user_id']] = array();
+                $users[$bids[$i]['user_id']][$bids[$i]['item_id']] = $bids[$i]['price'];
+            }
+            elseif (!array_key_exists($bids[$i]['item_id'], $users[$bids[$i]['user_id']])) {
+                $users[$bids[$i]['user_id']][$bids[$i]['item_id']] = $bids[$i]['price'];
+            }
+            else {
+                $old = $users[$bids[$i]['user_id']][$bids[$i]['item_id']];
+                if ($bids[$i]['price'] > $old) {
+                    $users[$bids[$i]['user_id']][$bids[$i]['item_id']] = $bids[$i]['price'];
+                }
+            }
+        }
+
+        $tmp = array();
+        foreach ($users as $user => $value) {
+            $user = M('user')->where(array('id'=>$user))->find();
+            $sum = 0;
+            foreach ($value as $k => $v) {
+                $sum += $v;
+            }
+            $tmp[] = array('user'=>$user['name'], 'price'=>$sum);
+        }
+        usort($tmp, "cmp");
+        $t1 = array();
+        $t2 = array();
+        for ($i = 0; $i < count($tmp) && $i < 5; $i++) { 
+            $t1[] = $tmp[$i]['user'];
+            $t2[] = $tmp[$i]['price'];
+        }
+        $rank_bid_money = array('user'=>$t1, 'money'=>$t2);
+
+
+        echo json_encode(array('user_count'=>$user_count, 'bid_count'=>$bid_count, 'rank_bid_count'=>$rank_bid_count, 'rank_bid_money'=>$rank_bid_money));
     }
 
     public function user() {
