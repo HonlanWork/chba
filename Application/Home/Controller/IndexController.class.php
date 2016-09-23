@@ -10,7 +10,7 @@ class IndexController extends Controller {
 
     public function index() {
         $auction = M('auction')->where(array('status'=>'当前'))->find();
-        $this->items = M('item')->where(array('auction_id'=>$auction['id']))->select();
+        $this->items = M('item')->where(array('auction_id'=>$auction['id']))->order('number asc')->select();
         $this->auction = $auction;
         $this->now = time();
         $this->display();
