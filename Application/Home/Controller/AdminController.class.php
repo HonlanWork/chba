@@ -69,7 +69,7 @@ class AdminController extends Controller {
 
     public function item(){
         $auction = M('auction')->where(array('status'=>'当前'))->find();
-        $this->items = M('item')->where(array('auction_id'=>$auction['id']))->select();
+        $this->items = M('item')->where(array('auction_id'=>$auction['id']))->order('number asc')->select();
         $this->auction = $auction;
         layout('admin');
     	$this->display();
