@@ -244,7 +244,7 @@ $(document).ready(function() {
             to = item_count - 1;
         }
         $('#plot1 .card').remove();
-        for (var i = from; i <= to; i++) {
+        for (var i = from; i < to; i++) {
             var $card = $("<div class='card'></div>");
             var $thumb = $("<div class='thumb'></div>");
             $thumb.css('background-image', 'url("' + "__PUBLIC__" + items[i]['thumbnail'] + '")');
@@ -414,6 +414,6 @@ $(document).ready(function() {
         .always(function() {
         });
         
-    }, 5000);
+    }, 10000);
 });
 </script>
