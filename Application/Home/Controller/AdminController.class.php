@@ -297,8 +297,23 @@ class AdminController extends Controller {
 
     public function stat_data() {
         $auction = M('auction')->where(array('status'=>'当前'))->find();
-        $bid_count = M('action')->where(array('auction_id'=>$auction['id']))->count();
+        $bid_count = 0;
         $bids = M('action')->where(array('auction_id'=>$auction['id']))->select();
+
+        // 统计竞拍总额
+        $tmp = array();
+        for ($i = 0; $i < count($bids); $i++) { 
+            if (!array_key_exists($bids[$i]['item_id'], $tmp)) {
+                $tmp[$bids[$i]['item_id']] = $bids[$i]['price'];
+            }
+            elseif ($tmp[$bids[$i]['item_id']] < $bids[$i]['price']) {
+                $tmp[$bids[$i]['item_id']] = $bids[$i]['price'];
+            }
+        }
+
+        foreach ($tmp as $key => $value) {
+            $bid_count += $value;
+        }
 
         // 统计总竞拍人数
         $tmp = array();
@@ -367,7 +382,6 @@ class AdminController extends Controller {
             $t2[] = $tmp[$i]['price'];
         }
         $rank_bid_money = array('user'=>$t1, 'money'=>$t2);
-
 
         echo json_encode(array('user_count'=>$user_count, 'bid_count'=>$bid_count, 'rank_bid_count'=>$rank_bid_count, 'rank_bid_money'=>$rank_bid_money));
     }

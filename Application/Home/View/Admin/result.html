@@ -121,7 +121,7 @@ html {
         <h3 style="text-align:center;color:#edafda;font-size:30px;margin-bottom:20px;"><span id="deadline" style="display:none;">{$auction.endtime}</span><span id="timeleft"></span></h3>
         <p style="font-size:13px;color:#8e9aa9;">参与人数 - Total Persons</p>
         <h3 style="text-align:center;color:#93b7e3;font-size:30px;margin-bottom:20px;"><span id="user_count">0</span></h3>
-        <p style="font-size:13px;color:#8e9aa9;">竞拍次数 - Total Bidding</p>
+        <p style="font-size:13px;color:#8e9aa9;">竞拍总额 - Total Bidding Amount</p>
         <h3 style="text-align:center;color:#59c4e6;font-size:30px;margin-bottom:20px;"><span id="bid_count">0</span></h3>
     </div>
     <div id="plot5"></div>
@@ -327,7 +327,7 @@ $(document).ready(function() {
             option = {
                 color: ['#93b7e3'],
                 title: {
-                    text: '竞拍次数 - Bid Times',
+                    text: '竞拍次数排名 - Bid Times Rank',
                     x: 'center',
                     y: 'top',
                     top: 15,
@@ -370,7 +370,7 @@ $(document).ready(function() {
             option = {
                 color: ['#edafda'],
                 title: {
-                    text: '竞拍总额 - Bid Money',
+                    text: '竞拍总额排名 - Bid Money Rank',
                     x: 'center',
                     y: 'top',
                     top: 15,
