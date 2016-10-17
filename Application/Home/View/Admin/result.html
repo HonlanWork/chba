@@ -166,7 +166,7 @@ $(document).ready(function() {
     get_data();
     setInterval(function() {
         get_data();
-    }, 10000);
+    }, 60000);
 
     function get_data() {
         $.ajax({
@@ -241,10 +241,12 @@ $(document).ready(function() {
         var from = item_index * 8;
         var to = (item_index + 1) * 8;
         if (to >= item_count) {
-            to = item_count - 1;
+            to = item_count;
         }
         $('#plot1 .card').remove();
         for (var i = from; i < to; i++) {
+            console.log(from);
+            console.log(to);
             var $card = $("<div class='card'></div>");
             var $thumb = $("<div class='thumb'></div>");
             $thumb.css('background-image', 'url("' + "__PUBLIC__" + items[i]['thumbnail'] + '")');
