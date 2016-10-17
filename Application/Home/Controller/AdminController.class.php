@@ -232,6 +232,70 @@ class AdminController extends Controller {
         layout('admin');
     	$this->display();
     }
+    
+    public function action_export(){
+        $xlsName = "action";
+        $xlsCell = array(
+            array('id','拍品序号'),
+            array('title','拍品名称'),
+            array('name', '用户名称'),
+            array('cellphone', '手机号码'),
+            array('price', '竞拍价格'),
+            array('timestamp', '竞拍时间'),
+            ); 
+
+        $auction = M('auction')->where(array('status'=>'当前'))->find();
+        $items = M('item')->where(array('auction_id'=>$auction['id']))->order('number asc')->select();
+
+        $xlsData = array();
+
+        for ($i = 0; $i < count($items); $i++) { 
+            $tmp = M('action')->where(array('item_id'=>$items[$i]['id']))->order('timestamp desc')->select();
+            $users = array();
+            $rank = array();
+            for ($j = 0; $j < count($tmp); $j++) { 
+                if (!array_key_exists($tmp[$j]['user_id'], $users)) {
+                    $users[$tmp[$j]['user_id']] = $tmp[$j]['price'];
+                    $rank[] = array('user_id'=>$tmp[$j]['user_id'], 'price'=>$tmp[$j]['price'], 'name'=>$tmp[$j]['name'], 'cellphone'=>$tmp[$j]['cellphone'], 'timestamp'=>$tmp[$j]['timestamp']);
+                }
+            }
+            usort($rank, "cmp");
+
+            for ($j = 0; $j < $items[$i]['amount']; $j++) {
+                $xlsData[] = array('id'=>$items[$i]['number'], 'title'=>$items[$i]['title'], 'name'=>$rank[$j]['name'], 'cellphone'=>$rank[$j]['cellphone'], 'price'=>$rank[$j]['price'], 'timestamp'=>$rank[$j]['timestamp']);
+            }
+        }
+
+        $xlsTitle = iconv('utf-8', 'gb2312', $xlsName);//文件名称
+        $fileName = '竞拍结果_'.date('YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
+        $cellNum = count($xlsCell);
+        $dataNum = count($xlsData);
+        vendor("PHPExcel.PHPExcel");
+       
+        $objPHPExcel = new \PHPExcel();
+        $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+        
+        for($i = 0; $i < $cellNum; $i++){
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'1', $xlsCell[$i][1]); 
+        } 
+          // Miscellaneous glyphs, UTF-8   
+        for($i = 0; $i < $dataNum; $i++){
+            for($j = 0; $j < $cellNum; $j++){
+                if ($j == 5 && $xlsData[$i][$xlsCell[$j][0]] != '') {
+                    $xlsData[$i][$xlsCell[$j][0]] = date('Y-m-d H:i:s', $xlsData[$i][$xlsCell[$j][0]]);  
+                }
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $xlsData[$i][$xlsCell[$j][0]]);
+            }             
+        }  
+        
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
+        $objWriter->save('php://output'); 
+        exit; 
+    }
+
 
     public function action_init(){
         $auction = M('auction')->where(array('status'=>'当前'))->find();
