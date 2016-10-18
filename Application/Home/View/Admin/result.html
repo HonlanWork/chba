@@ -137,15 +137,20 @@ $(document).ready(function() {
 
     function timer() {
         var ts = parseInt($('#deadline').text()) * 1000 - (new Date()).valueOf();
-        var dd = parseInt(ts / 1000 / 60 / 60 / 24, 10);
-        var hh = parseInt(ts / 1000 / 60 / 60 % 24, 10);
-        var mm = parseInt(ts / 1000 / 60 % 60, 10);
-        var ss = parseInt(ts / 1000 % 60, 10);
-        dd = checkTime(dd);
-        hh = checkTime(hh);
-        mm = checkTime(mm);
-        ss = checkTime(ss);
-        document.getElementById("timeleft").innerHTML = hh + ":" + mm + ":" + ss;
+        if (ts <= 0) {
+            document.getElementById("timeleft").innerHTML = "00:00:00";
+        }
+        else {
+            var dd = parseInt(ts / 1000 / 60 / 60 / 24, 10);
+            var hh = parseInt(ts / 1000 / 60 / 60 % 24, 10);
+            var mm = parseInt(ts / 1000 / 60 % 60, 10);
+            var ss = parseInt(ts / 1000 % 60, 10);
+            dd = checkTime(dd);
+            hh = checkTime(hh);
+            mm = checkTime(mm);
+            ss = checkTime(ss);
+            document.getElementById("timeleft").innerHTML = hh + ":" + mm + ":" + ss;
+        }
 
         setTimeout(function() {
             timer();
