@@ -47,7 +47,7 @@ html {
 }
 
 #plot1 .card p {
-    font-size: 14px;
+    font-size: 18px;
     color: #8e9aa9;
     margin-bottom: 5px;
 }
@@ -55,7 +55,8 @@ html {
 #plot1 .card h6 {
     font-size: 14px;
     color: #5a6779;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
+    margin-top: 3px;
 }
 
 #plot2 {
@@ -257,7 +258,7 @@ $(document).ready(function() {
             $card.append('<h5><span style="margin-right:10px;">' + items[i]['number'] + '</span>' + items[i]['title'] + '</h5>')
             $card.append('<h6>数量-Amount<span style="margin-left:10px;">' + items[i]['amount'] + '</span></h6>');
             $card.append('<h6>目前最高价-Highest Bid<span style="margin-left:10px;">' + items[i]['highest'] + '</span></h6>');
-            $card.append('<div class="winner"><h6 style="margin-bottom:8px;">出价人-Winner</h6>' + items[i]['result'] + '</div>');
+            $card.append('<div class="winner"><h6 style="margin-bottom:5px;">出价人-Winner</h6>' + items[i]['result'] + '</div>');
             $('#plot1').append($card);
         }
     }
