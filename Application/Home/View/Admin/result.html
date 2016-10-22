@@ -241,11 +241,11 @@ $(document).ready(function() {
 
     function plot2() {
         item_index += 1;
-        if (item_index * 8 >= item_count) {
+        if (item_index * 3 >= item_count) {
             item_index = 0;
         }
-        var from = item_index * 8;
-        var to = (item_index + 1) * 8;
+        var from = item_index * 3;
+        var to = (item_index + 1) * 3;
         if (to >= item_count) {
             to = item_count;
         }
@@ -421,6 +421,6 @@ $(document).ready(function() {
         .always(function() {
         });
         
-    }, 10000);
+    }, 5000);
 });
 </script>
