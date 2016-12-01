@@ -224,6 +224,58 @@ class AdminController extends Controller {
         $this->redirect('Admin/item_edit', array('id'=>I('id')));
     }
 
+    public function item_export(){
+        $xlsName = "item";
+        $xlsCell = array(
+            array('id','拍品序号'),
+            array('auction','所属晚宴'),
+            array('category','拍品分类'),
+            array('title','拍品名称'),
+            array('start','起拍价'),
+            array('step','每次加价'),
+            array('amount','拍品数量'),
+            array('donator','捐赠者'),
+            array('description','拍品介绍'),
+            array('donatorDesc','捐赠者介绍'),
+            ); 
+
+        $auction = M('auction')->where(array('status'=>'当前'))->find();
+        $items = M('item')->where(array('auction_id'=>$auction['id']))->order('number asc')->select();
+
+        for ($i = 0; $i < count($items); $i++) { 
+            $items[$i]['id'] = $items[$i]['number'];
+            $items[$i]['auction'] = $auction['title'].' '.$auction['titleen'];
+        }
+
+        $xlsData = $items;
+
+        $xlsTitle = iconv('utf-8', 'gb2312', $xlsName);//文件名称
+        $fileName = '拍品信息_'.date('YmdHis');//or $xlsTitle 文件名称可根据自己情况设定
+        $cellNum = count($xlsCell);
+        $dataNum = count($xlsData);
+        vendor("PHPExcel.PHPExcel");
+       
+        $objPHPExcel = new \PHPExcel();
+        $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+        
+        for($i = 0; $i < $cellNum; $i++){
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'1', $xlsCell[$i][1]); 
+        } 
+          // Miscellaneous glyphs, UTF-8   
+        for($i = 0; $i < $dataNum; $i++){
+            for($j = 0; $j < $cellNum; $j++){
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $xlsData[$i][$xlsCell[$j][0]]);
+            }             
+        }  
+        
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
+        $objWriter->save('php://output'); 
+        exit; 
+    }
+
     public function action(){
         $auction = M('auction')->where(array('status'=>'当前'))->find();
         $this->auction = $auction;

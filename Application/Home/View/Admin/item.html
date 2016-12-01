@@ -45,7 +45,8 @@ textarea.form-control:focus {
     <p>开始时间&nbsp;&nbsp;&nbsp;{$auction.begintime|date='Y-m-d H:i:s',###}</p>
     <p style="margin-bottom:0;">结束时间&nbsp;&nbsp;&nbsp;{$auction.endtime|date='Y-m-d H:i:s',###}</p>
 </div>
-<a href="{:U('Admin/item_set_thumb')}" class="btn btn-default" style="margin-bottom:20px;">设置封面图片</a>
+<!-- <a href="{:U('Admin/item_set_thumb')}" class="btn btn-default" style="margin-bottom:20px;">设置封面图片</a> -->
+<a href="{:U('Admin/item_export')}" class="btn btn-default" style="margin-bottom:20px;">导出当前晚宴的拍品信息</a>
 <div class="my_container">
     <h5>当前拍品</h5>
     <table class="table table-hover">
