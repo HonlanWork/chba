@@ -24,21 +24,21 @@ input.form-control {
 <form action="{:U('Login/register_handle')}" method="post">
     <div style="margin-top:80px;text-align:center;">
         <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
-        <div style="position:relative;left:-40px;">
-            <span style="margin-right:10px;position:relative;left:88px;">姓名 Name</span>
-            <input type="text" name="name" class="form-control" placeholder="">
+        <div style="position:relative;">
+            <span style="margin-right:10px;position:absolute;left:15%;top:6px;">姓名 Name</span>
+            <input type="text" name="name" class="form-control" placeholder="" style="width:70%;margin-left:15%;margin-right:15%;">
         </div>
-        <div style="position:relative;left:-40px;">
-            <span style="margin-right:10px;position:relative;left:85px;">邮箱 Email</span>
-            <input type="text" name="email" class="form-control" placeholder="">
+        <div style="position:relative;">
+            <span style="margin-right:10px;position:absolute;left:15%;top:6px;">邮箱 Email</span>
+            <input type="text" name="email" class="form-control" placeholder="" style="width:70%;margin-left:15%;margin-right:15%;">
         </div>
-        <div style="position:relative;left:-54px;">
-            <span style="margin-right:10px;position:relative;left:115px;">手机 Cellphone</span>
-            <input type="text" name="cellphone" class="form-control" placeholder="">
+        <div style="position:relative;">
+            <span style="margin-right:10px;position:absolute;left:15%;top:6px;">手机 Cellphone</span>
+            <input type="text" name="cellphone" class="form-control" placeholder="" style="width:70%;margin-left:15%;margin-right:15%;">
         </div>
-        <div style="position:relative;left:-54px;">
-            <span style="margin-right:10px;position:relative;left:115px;">密码 Password</span>
-            <input type="text" name="password" class="form-control" placeholder="">
+        <div style="position:relative;">
+            <span style="margin-right:10px;position:absolute;left:15%;top:6px;">密码 Password</span>
+            <input type="text" name="password" class="form-control" placeholder="" style="width:70%;margin-left:15%;margin-right:15%;">
         </div>
     </div>
     <if condition="$error neq ''">

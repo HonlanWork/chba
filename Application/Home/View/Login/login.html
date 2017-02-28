@@ -1,25 +1,33 @@
 <style>
 nav {
-	display: none;
+    display: none;
 }
+
 input.form-control {
-	margin: 0 auto;
-	width: 250px;
-	display: inline-block;
-	padding-left: 120px;
+    margin: 0 auto;
+    width: 250px;
+    display: inline-block;
+    padding-left: 120px;
 }
-#submit, #register, #send {
-	margin: 0 auto;
-	background-color: transparent;
-	border-color: #444;
-	color: #444;
-	margin-top: 40px;
+
+#submit,
+#register,
+#send {
+    margin: 0 auto;
+    background-color: transparent;
+    border-color: #444;
+    color: #444;
+    margin-top: 40px;
 }
-#submit:hover, #register:hover, #send:hover {
-	color: #fff;
-	background-color: #444;
-	border-color: #444;
+
+#submit:hover,
+#register:hover,
+#send:hover {
+    color: #fff;
+    background-color: #444;
+    border-color: #444;
 }
+
 #forget:hover {
     cursor: pointer;
 }
@@ -27,13 +35,13 @@ input.form-control {
 <form action="{:U('Login/login_handle')}" method="post" id="form1">
     <div style="margin-top:80px;text-align:center;">
         <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
-        <div style="position:relative;left:-50px;">
-            <span style="margin-right:10px;position:relative;left:115px;">手机 Cellphone</span>
-            <input type="text" name="cellphone" class="form-control" placeholder="">
+        <div style="position:relative;">
+            <span style="margin-right:10px;position:absolute;left:15%;top:6px;">手机 Cellphone</span>
+            <input type="text" name="cellphone" class="form-control" placeholder="" style="width:70%;margin-left:15%;margin-right:15%;">
         </div>
-        <div style="position:relative;left:-50px;">
-            <span style="margin-right:10px;position:relative;left:115px;">密码 Password</span>
-            <input type="password" name="password" class="form-control" placeholder="">
+        <div style="position:relative;">
+            <span style="margin-right:10px;position:absolute;left:15%;top:6px;">密码 Password</span>
+            <input type="password" name="password" class="form-control" placeholder="" style="width:70%;margin-left:15%;margin-right:15%;">
         </div>
         <p style="margin-bottom:0;font-size:12px;margin-top:10px;" id="forget">忘记密码 Forget</p>
     </div>
@@ -41,21 +49,24 @@ input.form-control {
         <p style="color:#dc2727;font-size:13px;text-align:center;margin-top:15px;margin-bottom:-20px;">{$error}</p>
     </if>
     <div style="text-align:center;">
-        <button class="btn btn-default disabled" id="submit" style="margin-right:5px;">登录<br/><span style="font-size:12px;">Log In</span></button>
+        <button class="btn btn-default disabled" id="submit" style="margin-right:5px;">登录
+            <br/><span style="font-size:12px;">Log In</span></button>
         <a href="{:U('Login/register')}" class="btn btn-default" id="register" style="margin-left:5px;">注册<br/><span style="font-size:12px;">Register</span></a>
     </div>
 </form>
 <form action="{:U('Login/forget')}" method="post" id="form2" style="display:none;">
     <div style="margin-top:80px;text-align:center;">
         <img src="__PUBLIC__/img/chba.png" alt="" style="width:240px;">
-        <p style="text-align:center;width:270px;margin:20px auto;">输入注册邮箱<br/>Enter your email</p>
-        <div style="position:relative;left:-50px;">
-            <span style="margin-right:10px;position:relative;left:85px;">邮箱 Email</span>
-            <input type="text" name="email" class="form-control" placeholder="" style="width:240px;padding-left:85px;">
+        <p style="text-align:center;width:270px;margin:20px auto;">输入注册邮箱
+            <br/>Enter your email</p>
+        <div style="position:relative;">
+            <span style="margin-right:10px;position:absolute;left:15%;top:6px;">邮箱 Email</span>
+            <input type="text" name="email" class="form-control" placeholder="" style="width:70%;margin-left:15%;margin-right:15%;padding-left:85px;">
         </div>
     </div>
     <div style="text-align:center;">
-        <button class="btn btn-default" id="send" style="margin-right:5px;">发送重置邮件<br/><span style="font-size:12px;">Send Email for Reset</span></button>
+        <button class="btn btn-default" id="send" style="margin-right:5px;">发送重置邮件
+            <br/><span style="font-size:12px;">Send Email for Reset</span></button>
     </div>
 </form>
 <script>
@@ -74,8 +85,7 @@ $(document).ready(function() {
 
         if (cellphone != '' && password != '' && cellphone.length == 11) {
             $('#submit').removeClass('disabled');
-        }
-        else {
+        } else {
             $('#submit').addClass('disabled');
         }
     });
@@ -86,8 +96,7 @@ $(document).ready(function() {
 
         if (cellphone != '' && password != '' && cellphone.length == 11) {
             $('#submit').removeClass('disabled');
-        }
-        else {
+        } else {
             $('#submit').addClass('disabled');
         }
     });
